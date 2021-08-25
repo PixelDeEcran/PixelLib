@@ -1,6 +1,7 @@
 package fr.pipilib.example.commands;
 
 import fr.pixeldeecran.pipilib.command.PCommand;
+import fr.pixeldeecran.pipilib.command.PCommandErrorHandler;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import org.bukkit.command.CommandSender;
 
@@ -12,6 +13,13 @@ import org.bukkit.command.CommandSender;
     permission = "fr.pipilib.commands.example" // The permission of the command
 )
 public class ExampleCommand extends PCommand { // extends PCommand, this tells that this is a command and not a subcommand
+
+    public ExampleCommand() {
+        PCommandErrorHandler errorHandler = new PCommandErrorHandler();
+        errorHandler.registerDefaults();
+        errorHandler.registerReasonMessage("WRONG_USAGE", "§cHey, check that if you didn't understand how to use this command : \"%4$s\"");
+        this.setErrorHandler(errorHandler);
+    }
 
     @Override
     public void execute(CommandSender sender) { // When the command is executed

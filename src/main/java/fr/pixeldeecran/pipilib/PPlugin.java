@@ -1,6 +1,6 @@
 package fr.pixeldeecran.pipilib;
 
-import fr.pixeldeecran.pipilib.command.CommandRegistry;
+import fr.pixeldeecran.pipilib.command.PCommandRegistry;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public abstract class PPlugin extends JavaPlugin {
@@ -12,12 +12,12 @@ public abstract class PPlugin extends JavaPlugin {
      */
     public static PPlugin INSTANCE;
 
-    private final CommandRegistry commandRegistry;
+    private final PCommandRegistry commandRegistry;
 
     public PPlugin() {
         INSTANCE = this;
 
-        this.commandRegistry = new CommandRegistry(this);
+        this.commandRegistry = new PCommandRegistry(this);
         this.commandRegistry.registerDefaults();
     }
 
@@ -31,7 +31,7 @@ public abstract class PPlugin extends JavaPlugin {
 
     }
 
-    public CommandRegistry getCommandRegistry() {
+    public PCommandRegistry getCommandRegistry() {
         return commandRegistry;
     }
 }

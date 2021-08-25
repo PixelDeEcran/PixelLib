@@ -1,11 +1,10 @@
 package fr.pixeldeecran.pipilib.command.arg.mc;
 
 import fr.pixeldeecran.pipilib.command.arg.PArgReader;
-import fr.pixeldeecran.pipilib.utils.INullable;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-public class PlayerPAR implements PArgReader<Player>, INullable {
+public class PlayerPAR implements PArgReader<Player> {
 
     @Override
     public Player read(String arg) {

@@ -1,9 +1,8 @@
 package fr.pixeldeecran.pipilib.command.arg.numbers;
 
 import fr.pixeldeecran.pipilib.command.arg.PArgReader;
-import fr.pixeldeecran.pipilib.utils.INullable;
 
-public abstract class NumberPAR<T extends Number> implements PArgReader<T>, INullable {
+public abstract class NumberPAR<T extends Number> implements PArgReader<T> {
 
     @Override
     public T read(String arg) {

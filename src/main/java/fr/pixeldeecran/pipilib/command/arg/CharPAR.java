@@ -1,8 +1,6 @@
 package fr.pixeldeecran.pipilib.command.arg;
 
-import fr.pixeldeecran.pipilib.utils.INullable;
-
-public class CharPAR implements PArgReader<Character>, INullable {
+public class CharPAR implements PArgReader<Character> {
 
     @Override
     public Character read(String arg) {

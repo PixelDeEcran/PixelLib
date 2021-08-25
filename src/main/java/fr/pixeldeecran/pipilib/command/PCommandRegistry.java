@@ -20,7 +20,7 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
-public class CommandRegistry {
+public class PCommandRegistry {
 
     private final PPlugin plugin;
     private final Map<Class<?>, PArgReader<?>> argReaderRegistry = new HashMap<>();
@@ -28,7 +28,7 @@ public class CommandRegistry {
 
     private CommandMap commandMap;
 
-    public CommandRegistry(PPlugin plugin) {
+    public PCommandRegistry(PPlugin plugin) {
         this.plugin = plugin;
 
         this.lookForCommandMap();

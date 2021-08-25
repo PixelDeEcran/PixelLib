@@ -1,8 +1,6 @@
 package fr.pixeldeecran.pipilib.command.arg;
 
-import fr.pixeldeecran.pipilib.utils.INullable;
-
-public class BooleanPAR implements PArgReader<Boolean>, INullable {
+public class BooleanPAR implements PArgReader<Boolean> {
 
     @Override
     public Boolean read(String arg) {

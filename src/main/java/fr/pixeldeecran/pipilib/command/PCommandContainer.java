@@ -1,6 +1,5 @@
 package fr.pixeldeecran.pipilib.command;
 
-import com.google.common.collect.ImmutableList;
 import fr.pixeldeecran.pipilib.PPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -16,7 +15,7 @@ public class PCommandContainer extends Command implements PluginIdentifiableComm
     private final PCommand command;
     private final PPlugin plugin;
 
-    public PCommandContainer(PCommand command, CommandRegistry commandRegistry, PPlugin plugin) {
+    public PCommandContainer(PCommand command, PCommandRegistry commandRegistry, PPlugin plugin) {
         super(command.getName());
 
         this.command = command;

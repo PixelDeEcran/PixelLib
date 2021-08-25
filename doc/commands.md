@@ -1,6 +1,7 @@
 # Commands
 
 In this topic, you will how learn to create commands, from simple one to complex one with sub commands.
+You will also learn how it works internally in order to more understand what you can do, and how you can do it.
 
 ## Basic Example 
 
@@ -172,7 +173,7 @@ public class SendCommand extends PSubCommand<MessageCommand> {
 }
 ```
 
-There is not much to say other than the new type `Player`, which required the specified player to be online.
+There is not much to say other than the new type `Player`, which requires the specified player to be online.
 
 ## Modify the behaviours of the sub commands
 
@@ -215,3 +216,353 @@ public class MessageCommand extends PCommand {
 
 The field `autoManagingSubCommands` is not required to be disabled in this case, it still helps to improve performances,
 and to keep control of what's going on.
+
+## Manage Errors
+
+One of the main problem that we can encounter with commands, and which causes the code to be very long
+is the error checking. So, to avoid this problem, we tried to simplify the error management while keeping it
+flexible.
+
+To do so, we added a `PCommandErrorHandler` and a `PCommandContext`. At every step, we update the context,
+so that when the error occurs, we can have enough information to send a precise error. We can know
+in which command, for what reason, at which index, with which arguments, and at which state.
+
+Here are all the information we can have access to : (from [PCommandContext](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandContext.java))
+
+```java
+public class PCommandContext {
+    
+    private PCommand currentCommand;
+    private CommandSender currentSender;
+    private String[] currentArgs;
+    private int currentIndex;
+    private boolean isReadingSentence;
+    private String currentError;
+}
+```
+
+Now, let's dive into the code of the [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+to understand how it works and how we can use it in order to be efficient.
+
+First, we have two fields, which are self describing :
+
+```java
+    private final Map<String, Function<PCommandContext, String>> reasons;
+    private boolean doesPrintException; // default true
+```
+
+Next, we have two methods which helps us register error message :
+
+```java
+    /**
+     * Use String format, args :
+     * 1 : current index (int)
+     * 2 : current arg (String)
+     * 3 : current command name (String)
+     * 4 : current command usage (String)
+     *
+     * @param reasonName The name of the reason
+     * @param message The message which will be formatted
+     */
+    public void registerReasonMessage(String reasonName, String message) {
+        this.registerReasonMessage(reasonName, context -> String.format(
+            message,
+            context.getCurrentIndex(),
+            context.getCurrentIndex() < context.getCurrentArgs().length ? context.getCurrentArgs()[context.getCurrentIndex()] : "",
+            context.getCurrentCommand().getFullName(),
+            context.getCurrentCommand().getFullUsage()
+        ));
+    }
+
+    public void registerReasonMessage(String reasonName, Function<PCommandContext, String> message) {
+        this.reasons.put(reasonName, message);
+    }
+```
+
+As you can see, not only we can register a custom message depending on the reason,
+but we can also create highly precise message, and even do others actions than sending messages.  
+
+When an error is detected, we can catch this error, and send a message describing the error. 
+
+```java
+    public void whenError(PCommandContext context) {
+        if (this.reasons.containsKey(context.getCurrentError())) {
+            context.getCurrentSender().sendMessage(this.reasons.get(context.getCurrentError()).apply(context));
+        }
+    }
+    
+    public void whenError(PCommandContext context, Exception exception) {
+        this.whenError(context);
+    
+        if (doesPrintException) {
+            exception.printStackTrace();
+        }
+    }
+```
+
+Notice the fact that there is two methods, one when there is an exception, and another when there isn't.
+The one with the exception is called when an exception other than [PCommandException](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java).
+
+Here you can see the `registerDefaults()` method which as the name says, register the default reason message. 
+
+```java
+    public void registerDefaults() {
+        this.registerReasonMessage("EXCEPTION", "§cException happened while reading the arg \"%2$s\" at index %1$d of the command \"%3$s\".");
+        this.registerReasonMessage("CRITICAL", "§cCritical error happened at arg \"%2$s\" of index %1$d with the command \"%3$s\".");
+
+        this.registerReasonMessage("ARG_NULL", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is null!");
+        this.registerReasonMessage("EMPTY_STRING", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is an empty String!");
+
+        this.registerReasonMessage("BOOLEAN_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Boolean!");
+        this.registerReasonMessage("BYTE_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Byte!");
+        this.registerReasonMessage("SHORT_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Short!");
+        this.registerReasonMessage("INTEGER_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Integer!");
+        this.registerReasonMessage("LONG_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Long!");
+        this.registerReasonMessage("FLOAT_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Float!");
+        this.registerReasonMessage("DOUBLE_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Double!");
+
+        this.registerReasonMessage("NOT_ONLINE_PLAYER", "§cThe player \"%2$s\" is not connected!");
+
+        this.registerReasonMessage("MUST_BE_PLAYER", "§cYou need to be a player to be able to do that!");
+        this.registerReasonMessage("WRONG_USAGE", "§cWrong usage : \"%4$s\"");
+    }
+```
+
+
+> But how do we catch these errors and how do we identify them?
+
+To understand, we first need to visit [PCommandContainer](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandContainer.java)
+and check this part :
+
+```java
+    @Override
+    public boolean execute(CommandSender sender, String commandLabel, String[] args) {
+        try {
+            this.command.internallyExecute(sender, args);
+            return true;
+        } catch (PCommandException e) {
+            this.command.getErrorHandler().whenError(this.command.getContext().setCurrentError(e.getMessage()));
+        } catch (Exception e) {
+            this.command.getErrorHandler().whenError(this.command.getContext().setCurrentError("EXCEPTION"), e);
+        }
+
+        return false;
+    }
+```
+
+As you can see, we first try to execute the command. (Note that `internallyExecute` is as the name says
+a method which do some works to simplify your life)  
+
+After, we check for two different types of exception :
+
+- The [PCommandException](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
+  which is catch for a non-critical exception and is mainly caused by the user who executed the command.  
+- The Exception, which mostly means that there were an error in your command implementation (in most cases).
+
+To understand where does this [PCommandException](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
+comes from, we need to see some parts of the code of [PCommand](../src/main/java/fr/pixeldeecran/pipilib/command/PCommand.java) :
+
+```java
+    @SuppressWarnings("unchecked")
+    public <T> T readOptionalArg(int index, T defaultValue) {
+        return (T) this.readArg(index, defaultValue.getClass(), defaultValue);
+    }
+
+    @SuppressWarnings("unchecked")
+    public <T> T readRequiredArg(int index, Class<T> typeClass) {
+        return (T) this.readArg(index, typeClass, null);
+    }
+
+    public Object readArg(int index, Class<?> typeClass, Object defaultValue) {
+        // Update context
+        this.context.setCurrentIndex(index);
+        this.context.setCurrentArgs(this.currentArgs);
+        this.context.setReadingSentence(false);
+
+        // Check if there are enough arguments
+        if (index >= this.currentArgs.length) {
+            if (defaultValue != null) { // Is optional arg ?
+                return defaultValue;
+            } else {
+                throw new PCommandException("WRONG_USAGE");
+            }
+        }
+
+        // Try to read the value
+        String arg = this.currentArgs[index];
+        PArgReader<?> argReader = this.commandRegistry.getArgReader(typeClass);
+        Object value = argReader.read(arg);
+
+        if (value != null) { // Have we been able to read the value ?
+            return value;
+        } else if (defaultValue != null) { // Is optional arg ?
+            return defaultValue;
+        } else {
+            throw new PCommandException(argReader.errorCause(arg));
+        }
+    }
+```
+
+As you can see above, the two functions `readOptionalArg` and `readRequiredArg` are just overloading
+the `readArg` function.  
+
+Notice the function `errorCause` at `throw new PCommandException(argReader.errorCause(arg));`?  
+To understand what it means, we first need to understand how we can parse the arguments.
+
+To parse an argument, we have an interface called [PArgReader](../src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) :
+
+```java
+public interface PArgReader<T> {
+
+    T read(String arg);
+
+    String errorCause(String arg);
+
+    String getDisplayName();
+}
+```
+
+You can see three functions, the first one which parse the arg, the second one 
+which returns the cause of the error of the arg, and finally the third one which returns the display name
+(actually not used, but it can still be useful information in the future).
+
+Let's see a simple implementation of the [PArgReader](../src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) :
+
+```java
+public class CharPAR implements PArgReader<Character> {
+
+    @Override
+    public Character read(String arg) {
+        return arg.length() > 0 ? arg.charAt(0) : null;
+    }
+
+    @Override
+    public String errorCause(String arg) {
+        return "EMPTY_STRING";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Character";
+    }
+}
+```
+
+In the `read` function, you can see that we return `null` when the argument length is `0`,
+so that when we try to parse the argument, we can understand that there were an error if an empty string
+is used as the argument.
+
+You can also see in the `errorCause` function the name of the error. Note the fact that this method is only
+called if the `read` function returns `null`.
+
+These principles are also applied with [PSentenceReader](../src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java).
+
+> Now that I understood how the library handles errors, how can I customize his behaviours?
+
+To do so, you can create your own [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+in order to register your custom messages!
+
+```java
+public class ExampleCommand extends PCommand {
+
+    public ExampleCommand() {
+        PCommandErrorHandler errorHandler = new PCommandErrorHandler();
+        errorHandler.registerDefaults();
+        errorHandler.registerReasonMessage("WRONG_USAGE", "§cHey, check that if you didn't understand how to use this command : \"%4$s\"");
+        this.setErrorHandler(errorHandler);
+    }
+}
+```
+
+Here, we just create our own [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java), 
+register the defaults messages, and register our custom one for finally replace the old error handler (although we could simply
+get the current [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java), 
+and register our own message).
+
+You can also create your own class, which extends of [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+and modify the default behaviours and to have a more reusable error handler!
+
+> And what if I want to register my own [PArgReader](../src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) 
+> or [PSentenceReader](../src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java)?
+
+First, you need to create an implementation of the [PArgReader](../src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) 
+or of the [PSentenceReader](../src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java).
+
+Then, you need to get the instance of your [PCommandRegistry](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandRegistry.java)
+(usually accessible via `this.getCommandRegistry()` in your main class).
+
+With it, you can register it :
+
+```java
+    @Override
+    public void onEnable() {
+        // Register our custom types
+        this.getCommandRegistry().registerArgReader(YourType.class, new YourTypePAR()); // For PArgReader
+        this.getCommandRegistry().registerSentenceReader(YourType.class, new YourTypePSR()); // For PSentenceReader
+        
+        // Register our commands
+        this.getCommandRegistry().registerAllCommandsIn(ExampleCommand.class.getPackage().getName());
+    }
+```
+
+(PAR stands for PArgReader and PSR stands for PSentenceReader)
+
+See this example where we create a simple Material reader :
+
+```java
+public class MaterialPAR implements PArgReader<Material> {
+
+    @Override
+    public Material read(String arg) {
+        try {
+            return Material.matchMaterial(arg);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String errorCause(String arg) {
+        return "UNKNOWN_MATERIAL";
+    }
+
+    @Override
+    public String getDisplayName() {
+        return "Material";
+    }
+}
+```
+
+Then we just have to register it :
+
+```java
+    @Override
+    public void onEnable() {
+        // Register our custom types
+        this.getCommandRegistry().registerArgReader(Material.class, new MaterialPAR());
+
+        // Register our commands
+        this.getCommandRegistry().registerAllCommandsIn(ExampleCommand.class.getPackage().getName());
+    }
+```
+
+And it's now ready to be used :
+
+```java
+    Material material = this.readRequiredArg(0, Material.class);
+```
+
+## Want to learn more?
+
+Go check this [example](../src/test/java/fr/pipilib/example/commands/EcoCommand.java) which is a simple example of an
+economy command, but which shows the flexibility of the library!  
+
+Check also these classes to learn more about what you can do, and how it works internally :
+
+ - [PCommandInfo](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandInfo.java)
+ - [PCommand](../src/main/java/fr/pixeldeecran/pipilib/command/PCommand.java)
+ - [PSubCommand](../src/main/java/fr/pixeldeecran/pipilib/command/PSubCommand.java)
+ - [PCommandRegistry](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandRegistry.java)
+ - [PCommandErrorHandler](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+ - [PCommandContext](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandContext.java)
+ - [PCommandContainer](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandContainer.java)

@@ -3,7 +3,6 @@ package fr.pixeldeecran.pipilib.command;
 import fr.pixeldeecran.pipilib.command.arg.PArgReader;
 import fr.pixeldeecran.pipilib.command.sentence.PSentenceReader;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -17,7 +16,7 @@ public abstract class PCommand {
 
     private PCommandContext context;
     private PCommandErrorHandler errorHandler;
-    private CommandRegistry commandRegistry;
+    private PCommandRegistry commandRegistry;
 
     private String[] currentArgs;
 
@@ -228,7 +227,7 @@ public abstract class PCommand {
 
     public void tabCompleteFor(CommandSender sender, int index, List<String> container) {}
 
-    public void setCommandRegistry(CommandRegistry commandRegistry) {
+    public void setCommandRegistry(PCommandRegistry commandRegistry) {
         this.commandRegistry = commandRegistry;
 
         this.subCommands.values().forEach(subCommand -> subCommand.setCommandRegistry(commandRegistry));
@@ -267,7 +266,7 @@ public abstract class PCommand {
         return this.getFullName() + (!this.getUsage().equals("") ? " " + this.getUsage() : "");
     }
 
-    public CommandRegistry getCommandRegistry() {
+    public PCommandRegistry getCommandRegistry() {
         return commandRegistry;
     }
 
