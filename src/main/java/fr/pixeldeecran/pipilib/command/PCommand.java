@@ -3,7 +3,9 @@ package fr.pixeldeecran.pipilib.command;
 import fr.pixeldeecran.pipilib.command.arg.PArgReader;
 import fr.pixeldeecran.pipilib.command.sentence.PSentenceReader;
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.command.CommandException;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -119,6 +121,14 @@ public abstract class PCommand {
             return defaultValue;
         } else {
             throw new PCommandException(sentenceReader.errorCause(sentence));
+        }
+    }
+
+    public Player requirePlayer(CommandSender sender) {
+        if (sender instanceof Player) {
+            return (Player) sender;
+        } else {
+            throw new PCommandException("MUST_BE_PLAYER");
         }
     }
 
