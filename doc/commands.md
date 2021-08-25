@@ -217,13 +217,13 @@ public class MessageCommand extends PCommand {
 The field `autoManagingSubCommands` is not required to be disabled in this case, it still helps to improve performances,
 and to keep control of what's going on.
 
-## Manage Errors
+## Dealing with errors
 
 One of the main problem that we can encounter with commands, and which causes the code to be very long
 is the error checking. So, to avoid this problem, we tried to simplify the error management while keeping it
 flexible.
 
-To do so, we added a `PCommandErrorHandler` and a `PCommandContext`. At every step, we update the context,
+To do so, we added a `PCommandErrorHandler` and a `PCommandContext`. And at every step, we update the context,
 so that when the error occurs, we can have enough information to send a precise error. We can know
 in which command, for what reason, at which index, with which arguments, and at which state.
 
@@ -350,14 +350,14 @@ and check this part :
     }
 ```
 
-As you can see, we first try to execute the command. (Note that `internallyExecute` is as the name says
-a method which do some works to simplify your life)  
+As you can see, we first try to execute the command. (Note that `internallyExecute` is as the name suggests
+a method which does some works to simplify your life)  
 
 After, we check for two different types of exception :
 
 - The [PCommandException](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
   which is catch for a non-critical exception and is mainly caused by the user who executed the command.  
-- The Exception, which mostly means that there were an error in your command implementation (in most cases).
+- The Exception, which means that there were an error in your command implementation (in most cases).
 
 To understand where does this [PCommandException](../src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
 comes from, we need to see some parts of the code of [PCommand](../src/main/java/fr/pixeldeecran/pipilib/command/PCommand.java) :
