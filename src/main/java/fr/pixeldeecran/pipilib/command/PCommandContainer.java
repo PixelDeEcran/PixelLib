@@ -8,6 +8,7 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.plugin.Plugin;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class PCommandContainer extends Command implements PluginIdentifiableCommand {
@@ -51,7 +52,7 @@ public class PCommandContainer extends Command implements PluginIdentifiableComm
             this.command.getErrorHandler().whenError(this.command.getContext().setCurrentError("EXCEPTION"), e);
         }
 
-        return ImmutableList.of();
+        return Collections.emptyList();
     }
 
     @Override
