@@ -1,11 +1,11 @@
-package fr.pixeldeecran.pipilibtest.commands;
+package fr.pipilib.example.commands;
 
+import fr.pipilib.example.commands.economy.AddCommand;
+import fr.pipilib.example.commands.economy.RemoveCommand;
+import fr.pipilib.example.commands.economy.SetCommand;
 import fr.pixeldeecran.pipilib.command.PCommand;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
-import fr.pixeldeecran.pipilibtest.commands.economy.AddCommand;
-import fr.pixeldeecran.pipilibtest.commands.economy.RemoveCommand;
-import fr.pixeldeecran.pipilibtest.commands.economy.SeeCommand;
-import fr.pixeldeecran.pipilibtest.commands.economy.SetCommand;
+import fr.pipilib.example.commands.economy.SeeCommand;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 

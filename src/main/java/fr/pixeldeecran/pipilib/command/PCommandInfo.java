@@ -26,4 +26,6 @@ public @interface PCommandInfo {
     int subCommandIndex() default 0;
 
     boolean doesPrintException() default true;
+
+    boolean autoManagingSubCommands() default true;
 }

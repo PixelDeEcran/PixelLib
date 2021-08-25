@@ -135,7 +135,7 @@ public abstract class PCommand {
     public void internallyExecute(CommandSender sender, String[] args) {
         this.currentArgs = args;
 
-        if (this.commandInfo.subCommandIndex() == 0) {
+        if (this.commandInfo.subCommandIndex() == 0 && this.commandInfo.autoManagingSubCommands()) {
             this.context.setCurrentCommand(this);
             this.context.setCurrentSender(sender);
             this.context.setCurrentArgs(this.currentArgs);

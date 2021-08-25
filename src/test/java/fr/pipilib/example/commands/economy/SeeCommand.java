@@ -1,8 +1,8 @@
-package fr.pixeldeecran.pipilibtest.commands.economy;
+package fr.pipilib.example.commands.economy;
 
+import fr.pipilib.example.commands.EcoCommand;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import fr.pixeldeecran.pipilib.command.PSubCommand;
-import fr.pixeldeecran.pipilibtest.commands.EcoCommand;
 import org.bukkit.command.CommandSender;
 
 @PCommandInfo(

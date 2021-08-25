@@ -1,4 +1,4 @@
-package fr.pixeldeecran.pipilibtest.commands.economy;
+package fr.pipilib.example.commands.economy;
 
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import org.bukkit.Bukkit;

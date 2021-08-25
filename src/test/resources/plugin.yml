@@ -1,6 +1,6 @@
-name: PipiLibTest
+name: Example
 version: ${project.version}
-main: fr.pixeldeecran.pipilibtest.TestPlugin
+main: fr.pipilib.example.ExamplePlugin
 authors: [ PixelDeEcran ]
-description: ${project.description}
+description: Demo of the PipiLib
 website: ${project.url}

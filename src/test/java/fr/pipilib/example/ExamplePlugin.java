@@ -1,9 +1,9 @@
-package fr.pixeldeecran.pipilibtest;
+package fr.pipilib.example;
 
+import fr.pipilib.example.commands.EcoCommand;
 import fr.pixeldeecran.pipilib.PPlugin;
-import fr.pixeldeecran.pipilibtest.commands.EcoCommand;
 
-public class TestPlugin extends PPlugin {
+public class ExamplePlugin extends PPlugin {
 
     @Override
     public void onEnable() {
