@@ -1,0 +1,6 @@
+name: PipiLibTest
+version: ${project.version}
+main: fr.pixeldeecran.pipilibtest.TestPlugin
+authors: [ PixelDeEcran ]
+description: ${project.description}
+website: ${project.url}
