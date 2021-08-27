@@ -6,6 +6,7 @@ import fr.pixeldeecran.pipilib.command.sentence.PSentenceReader;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.java.JavaPlugin;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
@@ -298,6 +299,19 @@ public abstract class PCommand {
     }
 
     /**
+     * Check if the command sender has the specified permission. If he hasn't or the permission is an empty String,
+     * a {@link PCommandException} will be thrown with the error "NOT_ENOUGH_PERMISSION".
+     *
+     * @param sender The command sender
+     * @param permission The permission to check
+     */
+    public void checkPermission(CommandSender sender, String permission) {
+        if (!sender.hasPermission(permission) && !permission.equals("")) {
+            throw new PCommandException("NOT_ENOUGH_PERMISSION");
+        }
+    }
+
+    /**
      * This function after the PCommandRegistry was set. This is where we register the default messages.
      *
      * You can listen to this function in order to replace the error handler
@@ -308,7 +322,7 @@ public abstract class PCommand {
 
     /**
      * This function is internally used in order to manage sub-command execution if
-     * {@link PCommandInfo#autoManagingSubCommands()} was enabled. It also updates the context.
+     * {@link PCommandInfo#autoManagingSubCommands()} was enabled. It also updates the context, and check permission.
      *
      * @param sender The command sender
      * @param args The arguments specified by the command sender
@@ -316,6 +330,11 @@ public abstract class PCommand {
     public void internallyExecute(CommandSender sender, String[] args) {
         // Set current args
         this.currentArgs = args;
+
+        // Check permission
+        if (this.commandInfo.autoCheckPermission()) {
+            this.checkPermission(sender, this.getPermission());
+        }
 
         // Auto-manage sub-commands if it is enabled
         if (this.commandInfo.autoManagingSubCommands() && this.commandInfo.subCommandIndex() == 0) {
@@ -470,7 +489,7 @@ public abstract class PCommand {
     /**
      * Setter of the {@link PCommand#commandRegistry}. This will also set the command registry for the sub-commands.
      * Use only this method if you know what you are doing. By default, the context is set in
-     * {@link PCommandContainer#PCommandContainer(PCommand, PCommandRegistry, PPlugin)}.
+     * {@link PCommandContainer#PCommandContainer(PCommand, PCommandRegistry, JavaPlugin)}.
      *
      * @param commandRegistry The new command registry
      *

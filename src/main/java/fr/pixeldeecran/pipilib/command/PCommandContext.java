@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 /**
  * Represents the context of the command. This keep track of a lot of information.
  */
-public class PCommandContext {
+public class PCommandContext { // TODO : Add more context
 
     /**
      * The current command.

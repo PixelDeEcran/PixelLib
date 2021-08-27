@@ -140,6 +140,7 @@ public class PCommandRegistry {
 
         this.errorHandlerTemplate.registerErrorMessage("MUST_BE_PLAYER", "§cYou need to be a player to be able to do that!");
         this.errorHandlerTemplate.registerErrorMessage("WRONG_USAGE", "§cWrong usage : \"%4$s\"");
+        this.errorHandlerTemplate.registerErrorMessage("NOT_ENOUGH_PERMISSION", "§cYou don't have enough permissions to do that!");
     }
 
     /**

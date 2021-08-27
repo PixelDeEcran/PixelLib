@@ -38,6 +38,8 @@ public @interface PCommandInfo {
     String description() default "";
 
     /**
+     * If the permission is empty, this will be considered as a command usable by everyone.
+     *
      * @return The permission of the command
      */
     String permission() default "";
@@ -61,4 +63,9 @@ public @interface PCommandInfo {
      * @return Do we need to auto-manage the sub-commands?
      */
     boolean autoManagingSubCommands() default true;
+
+    /**
+     * @return Do we need to auto-check the permission?
+     */
+    boolean autoCheckPermission() default true;
 }
