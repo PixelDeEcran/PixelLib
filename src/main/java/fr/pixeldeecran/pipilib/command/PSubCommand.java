@@ -1,17 +1,36 @@
 package fr.pixeldeecran.pipilib.command;
 
+/**
+ * Represents a sub-command.
+ *
+ * @param <T> The type of the command's parent
+ */
 public abstract class PSubCommand<T extends PCommand> extends PCommand {
 
+    /**
+     * The parent of this sub-command
+     */
     private T parent;
 
+    /**
+     * Setter of {@link PSubCommand#parent}. Be aware that is just to set the instance of the sub-command,
+     * you will need to do more work in order to actually relocate a sub-command to another command.
+     *
+     * @param parent The new parent of the sub-command
+     */
     @SuppressWarnings("unchecked")
     public void setParent(PCommand parent) {
         this.parent = (T) parent;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return The root command name
+     */
     @Override
-    public String getMainCommandName() {
-        return this.getParent().getMainCommandName();
+    public String getRootCommandName() {
+        return this.getParent().getRootCommandName();
     }
 
     @Override
@@ -19,6 +38,11 @@ public abstract class PSubCommand<T extends PCommand> extends PCommand {
         return this.getParent().getFullName() + " " + this.getName();
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @return The full usage of the command
+     */
     @Override
     public String getFullUsage() { // TODO : Fix this, surely not working for subcommand of subcommand
         String[] parentUsage = this.getParent() instanceof PSubCommand ?
@@ -28,7 +52,7 @@ public abstract class PSubCommand<T extends PCommand> extends PCommand {
 
         StringBuilder finalUsage = new StringBuilder();
 
-        finalUsage.append(this.getMainCommandName()).append(" ");
+        finalUsage.append(this.getRootCommandName()).append(" ");
 
         for (int i = 0; i < subCommandIndex; i++) {
             finalUsage.append(parentUsage[i]).append(" ");
@@ -44,6 +68,11 @@ public abstract class PSubCommand<T extends PCommand> extends PCommand {
         }
     }
 
+    /**
+     * Getter of {@link PSubCommand#parent}.
+     *
+     * @return The parent of the sub-command
+     */
     public T getParent() {
         return parent;
     }

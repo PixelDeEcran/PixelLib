@@ -1,36 +1,50 @@
 package fr.pixeldeecran.pipilib;
 
+import fr.pixeldeecran.pipilib.command.PCommand;
 import fr.pixeldeecran.pipilib.command.PCommandRegistry;
 import org.bukkit.plugin.java.JavaPlugin;
 
+/**
+ * Represents a plugin using the library. This is not required, but it's simplify a lot the setup.
+ */
 public abstract class PPlugin extends JavaPlugin {
 
     /**
-     * The main instance of the plugin
-     *
-     * I know, this is bad naming, but this variable in most case is considered as a singleton instance
+     * The command registry of this plugin.
      */
-    public static PPlugin INSTANCE;
-
     private final PCommandRegistry commandRegistry;
 
+    /**
+     * Main constructor of the plugin
+     */
     public PPlugin() {
-        INSTANCE = this;
-
         this.commandRegistry = new PCommandRegistry(this);
         this.commandRegistry.registerDefaults();
     }
 
-    @Override
-    public void onEnable() {
-
+    /**
+     * Overloading of {@link PCommandRegistry#registerAllCommandsIn(String)}.
+     *
+     * @param packageName The name of the package
+     */
+     public void registerAllCommandsIn(String packageName) {
+        this.commandRegistry.registerAllCommandsIn(packageName);
     }
 
-    @Override
-    public void onDisable() {
-
+    /**
+     * Overloading of {@link PCommandRegistry#registerCommand(Class)}.
+     *
+     * @param commandClass The class of the command to register
+     */
+    public void registerCommand(Class<? extends PCommand> commandClass) {
+        this.commandRegistry.registerCommand(commandClass);
     }
 
+    /**
+     * Getter of {@link PPlugin#commandRegistry}.
+     *
+     * @return The command registry
+     */
     public PCommandRegistry getCommandRegistry() {
         return commandRegistry;
     }

@@ -2,70 +2,92 @@ package fr.pixeldeecran.pipilib.command;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.function.Function;
+import java.util.function.Consumer;
 
+/**
+ * Represents the error handler. This is where you can modify the behaviours of when an error occurs.
+ */
 public class PCommandErrorHandler {
 
-    private final Map<String, Function<PCommandContext, String>> reasons;
+    /**
+     * Registry of the errors actions.
+     *
+     * @see PCommandErrorHandler#registerErrorMessage(String, String)
+     * @see PCommandErrorHandler#registerErrorAction(String, Consumer)
+     * @see PCommandErrorHandler#getErrorsActions()
+     */
+    private final Map<String, Consumer<PCommandContext>> errorsActions;
 
+    /**
+     * Do we need to print in the console the exception if one occurs? By default, it's set in {@link PCommand#PCommand()}
+     * with the value specified in {@link PCommandInfo}.
+     */
     private boolean doesPrintException;
 
+    /**
+     * Main constructor of {@link PCommandErrorHandler}.
+     */
     public PCommandErrorHandler() {
-        this.reasons = new HashMap<>();
+        this.errorsActions = new HashMap<>();
         this.doesPrintException = true;
     }
 
-    public void registerDefaults() {
-        this.registerReasonMessage("EXCEPTION", "§cException happened while reading the arg \"%2$s\" at index %1$d of the command \"%3$s\".");
-        this.registerReasonMessage("CRITICAL", "§cCritical error happened at arg \"%2$s\" of index %1$d with the command \"%3$s\".");
-
-        this.registerReasonMessage("ARG_NULL", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is null!");
-        this.registerReasonMessage("EMPTY_STRING", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is an empty String!");
-
-        this.registerReasonMessage("BOOLEAN_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Boolean!");
-        this.registerReasonMessage("BYTE_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Byte!");
-        this.registerReasonMessage("SHORT_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Short!");
-        this.registerReasonMessage("INTEGER_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Integer!");
-        this.registerReasonMessage("LONG_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Long!");
-        this.registerReasonMessage("FLOAT_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Float!");
-        this.registerReasonMessage("DOUBLE_NON_VALID_FORMAT", "§cThe arg \"%2$s\" at index %1$d in the command \"%3$s\" is not a valid Double!");
-
-        this.registerReasonMessage("NOT_ONLINE_PLAYER", "§cThe player \"%2$s\" is not connected!");
-
-        this.registerReasonMessage("MUST_BE_PLAYER", "§cYou need to be a player to be able to do that!");
-        this.registerReasonMessage("WRONG_USAGE", "§cWrong usage : \"%4$s\"");
+    /**
+     * Copying the errors actions of the {@link PCommandRegistry#getErrorHandlerTemplate()}.
+     *
+     * @param registry The registry which holds the error handler template
+     */
+    public void registerDefaults(PCommandRegistry registry) {
+        registry.getErrorHandlerTemplate().getErrorsActions().forEach(this::registerErrorAction);
     }
 
     /**
-     * Use String format, args :
+     * Register an error message sent to the current command sender using String format :
      * 1 : current index (int)
      * 2 : current arg (String)
      * 3 : current command name (String)
      * 4 : current command usage (String)
      *
-     * @param reasonName The name of the reason
-     * @param message The message which will be formatted
+     * @param errorName The name of the error
+     * @param message The message which will be formatted and sent
      */
-    public void registerReasonMessage(String reasonName, String message) {
-        this.registerReasonMessage(reasonName, context -> String.format(
+    public void registerErrorMessage(String errorName, String message) {
+        this.registerErrorAction(errorName, context -> context.getCurrentSender().sendMessage(String.format(
             message,
             context.getCurrentIndex(),
             context.getCurrentIndex() < context.getCurrentArgs().length ? context.getCurrentArgs()[context.getCurrentIndex()] : "",
             context.getCurrentCommand().getFullName(),
             context.getCurrentCommand().getFullUsage()
-        ));
+        )));
     }
 
-    public void registerReasonMessage(String reasonName, Function<PCommandContext, String> message) {
-        this.reasons.put(reasonName, message);
+    /**
+     * Register an error action for an error name.
+     *
+     * @param errorName The name of the error
+     * @param action The action which will be executed when the error occurs
+     */
+    public void registerErrorAction(String errorName, Consumer<PCommandContext> action) {
+        this.errorsActions.put(errorName, action);
     }
 
+    /**
+     * When an error occurs.
+     *
+     * @param context The command context
+     */
     public void whenError(PCommandContext context) {
-        if (this.reasons.containsKey(context.getCurrentError())) {
-            context.getCurrentSender().sendMessage(this.reasons.get(context.getCurrentError()).apply(context));
+        if (this.errorsActions.containsKey(context.getCurrentError())) {
+            this.errorsActions.get(context.getCurrentError()).accept(context);
         }
     }
 
+    /**
+     * When an error happened caused by an exception.
+     *
+     * @param context The command context
+     * @param exception The exception which occurred
+     */
     public void whenError(PCommandContext context, Exception exception) {
         this.whenError(context);
 
@@ -74,10 +96,29 @@ public class PCommandErrorHandler {
         }
     }
 
+    /**
+     * Setter of {@link PCommandErrorHandler#doesPrintException}
+     *
+     * @param doesPrintException Will we now print the exception?
+     */
     public void setDoesPrintException(boolean doesPrintException) {
         this.doesPrintException = doesPrintException;
     }
 
+    /**
+     * Getter of {@link PCommandErrorHandler#errorsActions}
+     *
+     * @return The errors action's registry
+     */
+    public Map<String, Consumer<PCommandContext>> getErrorsActions() {
+        return errorsActions;
+    }
+
+    /**
+     * Getter of {@link PCommandErrorHandler#doesPrintException}
+     *
+     * @return Do we need to print the exception?
+     */
     public boolean doesPrintException() {
         return doesPrintException;
     }

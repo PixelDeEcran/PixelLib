@@ -14,10 +14,11 @@ import org.bukkit.command.CommandSender;
 )
 public class ExampleCommand extends PCommand { // extends PCommand, this tells that this is a command and not a subcommand
 
-    public ExampleCommand() {
+    @Override
+    public void init() {
         PCommandErrorHandler errorHandler = new PCommandErrorHandler();
-        errorHandler.registerDefaults();
-        errorHandler.registerReasonMessage("WRONG_USAGE", "§cHey, check that if you didn't understand how to use this command : \"%4$s\"");
+        errorHandler.registerDefaults(this.getCommandRegistry());
+        errorHandler.registerErrorMessage("WRONG_USAGE", "§cHey, check that if you didn't understand how to use this command : \"%4$s\"");
         this.setErrorHandler(errorHandler);
     }
 

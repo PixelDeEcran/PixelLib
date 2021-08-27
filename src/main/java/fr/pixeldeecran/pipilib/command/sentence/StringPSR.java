@@ -1,7 +1,18 @@
 package fr.pixeldeecran.pipilib.command.sentence;
 
+import fr.pixeldeecran.pipilib.command.arg.StringPAR;
+
+/**
+ * Represents the {@link String} sentence parser.
+ */
 public class StringPSR implements PSentenceReader<String> {
 
+    /**
+     * Parse a sentence.
+     *
+     * @param sentence The sentence
+     * @return The value parsed
+     */
     @Override
     public String read(String[] sentence) {
         StringBuilder builder = new StringBuilder();
@@ -15,11 +26,22 @@ public class StringPSR implements PSentenceReader<String> {
         return builder.toString();
     }
 
+    /**
+     * Return the name of the error. <br>
+     * With a {@link StringPAR}, the errors can be : <br>
+     *  - "CRITICAL" : An unexpected error
+     *
+     * @param sentence The sentence
+     * @return The error name
+     */
     @Override
     public String errorCause(String[] sentence) {
         return "CRITICAL";
     }
 
+    /**
+     * @return The display name
+     */
     @Override
     public String getDisplayName() {
         return "String";
