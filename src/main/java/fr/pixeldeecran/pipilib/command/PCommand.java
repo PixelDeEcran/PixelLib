@@ -1,6 +1,6 @@
 package fr.pixeldeecran.pipilib.command;
 
-import fr.pixeldeecran.pipilib.PPlugin;
+import fr.pixeldeecran.pipilib.command.PCommandContext.Action;
 import fr.pixeldeecran.pipilib.command.arg.PArgReader;
 import fr.pixeldeecran.pipilib.command.sentence.PSentenceReader;
 import org.apache.commons.lang.StringUtils;
@@ -176,9 +176,9 @@ public abstract class PCommand {
      */
     public Object readArg(int index, Class<?> typeClass, Object defaultValue) {
         // Update context
-        this.context.setCurrentIndex(index);
-        this.context.setCurrentArgs(this.currentArgs);
-        this.context.setReadingSentence(false);
+        this.resetPartiallyContext()
+            .setCurrentAction(Action.READING_ARGUMENT)
+            .setCurrentIndex(index);
 
         // Check if the user has specified enough arguments
         if (index >= this.currentArgs.length) {
@@ -192,6 +192,7 @@ public abstract class PCommand {
         // Parse the argument
         String arg = this.currentArgs[index];
         PArgReader<?> argReader = this.commandRegistry.getArgReader(typeClass);
+        this.context.setCurrentArgReader(argReader);
         Object value = argReader.read(arg);
 
         if (value != null) { // Was the parsing successful?
@@ -252,9 +253,9 @@ public abstract class PCommand {
      */
     public Object readSentence(int index, Class<?> typeClass, Object defaultValue) {
         // Update context
-        this.context.setCurrentIndex(index);
-        this.context.setCurrentArgs(this.currentArgs);
-        this.context.setReadingSentence(true);
+        this.resetPartiallyContext()
+            .setCurrentAction(Action.READING_SENTENCE)
+            .setCurrentIndex(index);
 
         // Check if the user has specified enough arguments
         if (index >= this.currentArgs.length) {
@@ -268,6 +269,7 @@ public abstract class PCommand {
         // Parse the arguments
         String[] sentence = Arrays.copyOfRange(this.currentArgs, index, this.currentArgs.length);
         PSentenceReader<?> sentenceReader = this.commandRegistry.getSentenceReader(typeClass);
+        this.context.setCurrentSentenceReader(sentenceReader);
         Object value = sentenceReader.read(sentence);
 
         if (value != null) { // Was the parsing successful?
@@ -289,7 +291,8 @@ public abstract class PCommand {
      */
     public Player requirePlayer(CommandSender sender) {
         // Update the context
-        this.getContext().setCurrentSender(sender);
+        this.resetPartiallyContext()
+            .setCurrentAction(Action.REQUIRING_PLAYER);
 
         if (sender instanceof Player) {
             return (Player) sender;
@@ -306,6 +309,12 @@ public abstract class PCommand {
      * @param permission The permission to check
      */
     public void checkPermission(CommandSender sender, String permission) {
+        // Update context
+        this.resetPartiallyContext()
+            .setCurrentAction(Action.CHECKING_PERMISSION)
+            .setCurrentPermission(permission);
+
+        // Check permission
         if (!sender.hasPermission(permission) && !permission.equals("")) {
             throw new PCommandException("NOT_ENOUGH_PERMISSION");
         }
@@ -340,10 +349,7 @@ public abstract class PCommand {
         if (this.commandInfo.autoManagingSubCommands() && this.commandInfo.subCommandIndex() == 0) {
 
             // Update the context
-            this.context.setCurrentCommand(this);
-            this.context.setCurrentSender(sender);
-            this.context.setCurrentArgs(this.currentArgs);
-            this.context.setCurrentIndex(0);
+            this.updateContext(sender, args);
 
             boolean result = this.executeSubCommands(sender);
 
@@ -353,10 +359,7 @@ public abstract class PCommand {
         }
 
         // Update the context
-        this.context.setCurrentCommand(this);
-        this.context.setCurrentSender(sender);
-        this.context.setCurrentArgs(this.currentArgs);
-        this.context.setCurrentIndex(0);
+        this.updateContext(sender, args);
 
         // Called the main execute function
         this.execute(sender);
@@ -414,20 +417,14 @@ public abstract class PCommand {
         this.currentArgs = args;
 
         // Update context
-        this.context.setCurrentCommand(this);
-        this.context.setCurrentSender(sender);
-        this.context.setCurrentArgs(this.currentArgs);
-        this.context.setCurrentIndex(0);
+        this.updateContext(sender, args);
 
         // TODO : Auto-completion the sub-command's name and aliases
         List<String> completions = this.tabCompleteSubCommands(sender); // TODO : handle PCommandInfo#autoManagingSubCommands()
         if (completions == null) { // Has a tab completion been found in the sub-commands?
 
             // Re-update context
-            this.context.setCurrentCommand(this);
-            this.context.setCurrentSender(sender);
-            this.context.setCurrentArgs(this.currentArgs);
-            this.context.setCurrentIndex(0);
+            this.updateContext(sender, args);
 
             // Called the main tab completion function
             this.tabCompleteFor(sender, args.length - 1, completions = new ArrayList<>());
@@ -485,6 +482,35 @@ public abstract class PCommand {
      * @param container The container of the tab completion
      */
     public void tabCompleteFor(CommandSender sender, int index, List<String> container) {}
+
+    /**
+     * Used to update the context, especially reset the context and set the current command sender, the current args, and
+     * the current command.
+     *
+     * @param sender The command sender
+     * @param args The arguments
+     */
+    public void updateContext(CommandSender sender, String[] args) {
+        this.resetPartiallyContext()
+            .setCurrentCommand(this)
+            .setCurrentSender(sender)
+            .setCurrentArgs(args);
+    }
+
+    /**
+     * Reset partially the context.
+     *
+     * @return The context
+     */
+    public PCommandContext resetPartiallyContext() {
+        return this.context
+            .setCurrentArgs(this.currentArgs)
+            .setCurrentIndex(0)
+            .setCurrentAction(Action.NONE)
+            .setCurrentPermission("")
+            .setCurrentArgReader(null)
+            .setCurrentSentenceReader(null);
+    }
 
     /**
      * Setter of the {@link PCommand#commandRegistry}. This will also set the command registry for the sub-commands.
