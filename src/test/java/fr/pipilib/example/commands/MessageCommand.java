@@ -4,10 +4,12 @@ import fr.pipilib.example.commands.broadcast.BroadcastCommand;
 import fr.pipilib.example.commands.broadcast.HelpCommand;
 import fr.pipilib.example.commands.broadcast.SendCommand;
 import fr.pixeldeecran.pipilib.command.PCommand;
+import fr.pixeldeecran.pipilib.command.PCommandExist;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
+@PCommandExist
 @PCommandInfo(
     name = "message",
     aliases = {"msg"},

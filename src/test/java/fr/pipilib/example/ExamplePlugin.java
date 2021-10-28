@@ -10,10 +10,7 @@ public class ExamplePlugin extends PPlugin {
 
     @Override
     public void onEnable() {
-        // Register our custom types
-        this.getCommandRegistry().registerArgReader(Material.class, new MaterialPAR());
-
         // Register our commands
-        this.getCommandRegistry().registerAllCommandsIn(ExampleCommand.class.getPackage().getName());
+        this.registerAllCommandsIn("fr.pipilib.example.commands");
     }
 }

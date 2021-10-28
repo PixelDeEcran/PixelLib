@@ -25,8 +25,7 @@ public class HelpCommand extends PSubCommand<MessageCommand> { // We specify the
         // PCommand#getAllSubCommands() returns a list with all sub commands, and even sub commands of sub commands, etc...
         // In fact, it's just a recursive function
         this.getParent().getAllSubCommands().forEach(subCommand -> {
-            // We iterate through all sub commands and send a message with the full usage and the description of the sub command
-            sender.sendMessage(String.format("§6%1$s : §e%2$s", subCommand.getFullUsage(), subCommand.getDescription()));
+            sender.sendMessage("§6" + subCommand.getFullUsage() + " : §e" + subCommand.getDescription());
         });
     }
 }

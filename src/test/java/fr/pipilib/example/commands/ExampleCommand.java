@@ -2,9 +2,12 @@ package fr.pipilib.example.commands;
 
 import fr.pixeldeecran.pipilib.command.PCommand;
 import fr.pixeldeecran.pipilib.command.PCommandErrorHandler;
+import fr.pixeldeecran.pipilib.command.PCommandExist;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+@PCommandExist
 @PCommandInfo( // Describe the example command
     name = "example", // The name of the command
     aliases = "examples", // The aliases of the command
@@ -18,7 +21,7 @@ public class ExampleCommand extends PCommand { // extends PCommand, this tells t
     public void init() {
         PCommandErrorHandler errorHandler = new PCommandErrorHandler();
         errorHandler.registerDefaults(this.getCommandRegistry());
-        errorHandler.registerErrorMessage("WRONG_USAGE", "§cHey, check that if you didn't understand how to use this command : \"%4$s\"");
+        errorHandler.registerErrorMessage("NOT_ONLINE_PLAYER", "§cLe Joueur %2$s ne semble pas être connecté !");
         this.setErrorHandler(errorHandler);
     }
 
