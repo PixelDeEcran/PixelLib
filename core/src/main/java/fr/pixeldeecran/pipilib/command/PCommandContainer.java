@@ -1,6 +1,5 @@
 package fr.pixeldeecran.pipilib.command;
 
-import fr.pixeldeecran.pipilib.PPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;

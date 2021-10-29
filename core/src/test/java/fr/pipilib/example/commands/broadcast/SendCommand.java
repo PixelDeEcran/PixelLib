@@ -3,7 +3,6 @@ package fr.pipilib.example.commands.broadcast;
 import fr.pipilib.example.commands.MessageCommand;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import fr.pixeldeecran.pipilib.command.PSubCommand;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

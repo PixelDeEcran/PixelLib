@@ -5,88 +5,22 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.pixeldeecran</groupId>
-    <artifactId>pipilib</artifactId>
-    <version>1.0.0</version>
-    <packaging>jar</packaging>
+    <artifactId>pipilib-parent</artifactId>
+    <version>1.1.0</version>
+    <packaging>pom</packaging>
 
     <name>PipiLib</name>
-    <description>Small Library to simplify the creation of plugin</description>
+    <description>Small library to simplify the creation of plugin</description>
     <url>https://github.com/PixelDeEcran</url>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <buildDirectory>${project.basedir}/target</buildDirectory>
     </properties>
 
-    <build>
-        <directory>${buildDirectory}</directory>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
-                <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
-                    <excludes>
-                        <exclude>fr.pixeldeecran.fr.pixeldeecran.pipilibtest.fr.pixeldeecran.pipilibtest</exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-shade-plugin</artifactId>
-                <version>3.2.4</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <createDependencyReducedPom>false</createDependencyReducedPom>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-    </build>
-
-    <repositories>
-        <repository>
-            <id>spigotmc-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
-            <id>sonatype</id>
-            <url>https://oss.sonatype.org/content/groups/public/</url>
-        </repository>
-    </repositories>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.spigotmc</groupId>
-            <artifactId>spigot-api</artifactId>
-            <version>1.12.2-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.11.0</version>
-        </dependency>
-    </dependencies>
+    <modules>
+        <module>core</module>
+        <module>v1_8_R3</module>
+        <module>dist</module>
+    </modules>
 </project>

@@ -5,7 +5,6 @@ import fr.pixeldeecran.pipilib.command.PCommandErrorHandler;
 import fr.pixeldeecran.pipilib.command.PCommandExist;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 @PCommandExist
 @PCommandInfo( // Describe the example command
