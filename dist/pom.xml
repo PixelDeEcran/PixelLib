@@ -45,20 +45,6 @@
                                     <include>fr.pixeldeecran:pipilib-*</include>
                                 </includes>
                             </artifactSet>
-                            <relocations>
-                                <relocation>
-                                    <pattern>org.apache.commons.io</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.commons-io</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.reflections</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.reflections</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>javassist</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.javassist</shadedPattern>
-                                </relocation>
-                            </relocations>
                         </configuration>
                     </execution>
                 </executions>

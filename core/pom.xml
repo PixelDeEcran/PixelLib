@@ -48,12 +48,16 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
-                                    <pattern>commons-io.fastboard</pattern>
-                                    <shadedPattern>fr.lyrania.ffarush.fastboard</shadedPattern>
+                                    <pattern>org.apache.commons.io</pattern>
+                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.commons-io</shadedPattern>
                                 </relocation>
                                 <relocation>
-                                    <pattern>com.zaxxer.hikari</pattern>
-                                    <shadedPattern>fr.lyrania.ffarush.hikari</shadedPattern>
+                                    <pattern>org.reflections</pattern>
+                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.reflections</shadedPattern>
+                                </relocation>
+                                <relocation>
+                                    <pattern>javassist</pattern>
+                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.javassist</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
