@@ -13,7 +13,7 @@ import java.util.*;
 
 /**
  * Represents a simple PCommand.
- *
+ * <p>
  * In order to register a command, you need to add the annotation {@link PCommandExist} to the class of the command,
  * in addition to the annotation {@link PCommandInfo} describing your command.
  */
@@ -121,7 +121,7 @@ public abstract class PCommand {
             this.errorHandler.setDoesPrintException(this.commandInfo.doesPrintException());
         } else {
             throw new IllegalStateException("The class " + this.getClass().getName() + " needs to have a PCommandInfo" +
-                    " annotation in order to get infos");
+                " annotation in order to get infos");
         }
 
         // Set the context after the sub-commands have been registered, so that this also set the same context for
@@ -133,9 +133,9 @@ public abstract class PCommand {
      * Parse an optional argument in the current args as a usable value. This is an overloading of
      * {@link PCommand#readArg(int, Class, Object)}.
      *
-     * @param index The index of the argument
+     * @param index        The index of the argument
      * @param defaultValue The value returned if the argument couldn't be parsed
-     * @param <T> The type of the value wanted after passing the argument
+     * @param <T>          The type of the value wanted after passing the argument
      * @return The value of the parsed argument
      */
     @SuppressWarnings("unchecked")
@@ -148,9 +148,9 @@ public abstract class PCommand {
      * {@link PCommand#readArg(int, Class, Object)}. If it couldn't read the value, an exception will be thrown
      * and be by default caught by {@link PCommandContainer}.
      *
-     * @param index The index of the argument
+     * @param index     The index of the argument
      * @param typeClass The type of the value
-     * @param <T> The type of the value wanted after passing the argument
+     * @param <T>       The type of the value wanted after passing the argument
      * @return The value of the parsed argument
      */
     @SuppressWarnings("unchecked")
@@ -169,8 +169,8 @@ public abstract class PCommand {
      * <br>
      * This is also where the context is updated.
      *
-     * @param index The index of the argument
-     * @param typeClass The type of the wanted value
+     * @param index        The index of the argument
+     * @param typeClass    The type of the wanted value
      * @param defaultValue The default value if the argument couldn't be parsed
      * @return The value that could be read
      */
@@ -208,9 +208,9 @@ public abstract class PCommand {
      * Read an optional sentence starting at the passed index. If it can't read the sentence, the
      * default value will be returned. The length of the sentence is determined by the {@link PSentenceReader}.
      *
-     * @param index The starting index of the argument
+     * @param index        The starting index of the argument
      * @param defaultValue The default value if the sentence couldn't be parsed
-     * @param <T> The type of the wanted sentence
+     * @param <T>          The type of the wanted sentence
      * @return The sentence that could be read
      */
     @SuppressWarnings("unchecked")
@@ -223,9 +223,9 @@ public abstract class PCommand {
      * and be by default caught by {@link PCommandContainer}. The length of the sentence is determined by the
      * {@link PSentenceReader}.
      *
-     * @param index The starting index of the argument
+     * @param index     The starting index of the argument
      * @param typeClass The class of the type of the wanted sentence
-     * @param <T> The type of the wanted sentence
+     * @param <T>       The type of the wanted sentence
      * @return The sentence that could be read
      */
     @SuppressWarnings("unchecked")
@@ -246,8 +246,8 @@ public abstract class PCommand {
      * <br>
      * This is also where the context is updated.
      *
-     * @param index The starting index of the argument
-     * @param typeClass The type of the wanted sentence
+     * @param index        The starting index of the argument
+     * @param typeClass    The type of the wanted sentence
      * @param defaultValue The default value if the argument couldn't be parsed
      * @return The sentence that could be read
      */
@@ -305,7 +305,7 @@ public abstract class PCommand {
      * Check if the command sender has the specified permission. If he hasn't or the permission is an empty String,
      * a {@link PCommandException} will be thrown with the error "NOT_ENOUGH_PERMISSION".
      *
-     * @param sender The command sender
+     * @param sender     The command sender
      * @param permission The permission to check
      */
     public void checkPermission(CommandSender sender, String permission) {
@@ -322,7 +322,7 @@ public abstract class PCommand {
 
     /**
      * This function after the PCommandRegistry was set. This is where we register the default messages.
-     *
+     * <p>
      * You can listen to this function in order to replace the error handler
      */
     public void init() {
@@ -334,7 +334,7 @@ public abstract class PCommand {
      * {@link PCommandInfo#autoManagingSubCommands()} was enabled. It also updates the context, and check permission.
      *
      * @param sender The command sender
-     * @param args The arguments specified by the command sender
+     * @param args   The arguments specified by the command sender
      */
     public void internallyExecute(CommandSender sender, String[] args) {
         // Set current args
@@ -386,9 +386,9 @@ public abstract class PCommand {
 
                 // Execute the sub-command
                 this.subCommands.get(arg).internallyExecute(
-                        sender,
-                        this.currentArgs.length > index + 1 ? Arrays.copyOfRange(this.currentArgs, index + 1,
-                            this.currentArgs.length) : new String[0]
+                    sender,
+                    this.currentArgs.length > index + 1 ? Arrays.copyOfRange(this.currentArgs, index + 1,
+                        this.currentArgs.length) : new String[0]
                 );
 
                 return true; // A sub-command have been executed
@@ -403,14 +403,15 @@ public abstract class PCommand {
      *
      * @param sender The command sender
      */
-    public void execute(CommandSender sender) {}
+    public void execute(CommandSender sender) {
+    }
 
     /**
      * This function is internally used in order to manage sub-command tab completion
      * if {@link PCommandInfo#autoManagingSubCommands()} was enabled. It also updates the context.
      *
      * @param sender The command sender
-     * @param args The arguments specified by the command sender
+     * @param args   The arguments specified by the command sender
      * @return The tab completion list which will be sent to the player
      */
     public List<String> internallyTabCompleteFor(CommandSender sender, String[] args) {
@@ -477,18 +478,19 @@ public abstract class PCommand {
      * to the container, and the library will filter it, so that only string which starts with what enters the sender
      * will be sent.
      *
-     * @param sender The command sender
-     * @param index The index of the argument ask for tab completion
+     * @param sender    The command sender
+     * @param index     The index of the argument ask for tab completion
      * @param container The container of the tab completion
      */
-    public void tabCompleteFor(CommandSender sender, int index, List<String> container) {}
+    public void tabCompleteFor(CommandSender sender, int index, List<String> container) {
+    }
 
     /**
      * Used to update the context, especially reset the context and set the current command sender, the current args, and
      * the current command.
      *
      * @param sender The command sender
-     * @param args The arguments
+     * @param args   The arguments
      */
     public void updateContext(CommandSender sender, String[] args) {
         this.resetPartiallyContext()
@@ -513,47 +515,6 @@ public abstract class PCommand {
     }
 
     /**
-     * Setter of the {@link PCommand#commandRegistry}. This will also set the command registry for the sub-commands.
-     * Use only this method if you know what you are doing. By default, the context is set in
-     * {@link PCommandContainer#PCommandContainer(PCommand, PCommandRegistry, JavaPlugin)}.
-     *
-     * @param commandRegistry The new command registry
-     *
-     * @see PCommand#getCommandRegistry()
-     */
-    public void setCommandRegistry(PCommandRegistry commandRegistry) {
-        this.commandRegistry = commandRegistry;
-
-        this.subCommands.values().forEach(subCommand -> subCommand.setCommandRegistry(commandRegistry));
-    }
-
-    /**
-     * Setter of the {@link PCommand#context}. This will also set the command context for the sub-commands.
-     * Use only this method if you know what you are doing. By default, the context is set in {@link PCommand#PCommand()}.
-     *
-     * @param context The new command context
-     *
-     * @see PCommand#getContext()
-     */
-    public void setContext(PCommandContext context) {
-        this.context = context;
-
-        this.subCommands.values().forEach(subCommand -> subCommand.setContext(context));
-    }
-
-    /**
-     * Setter of the {@link PCommand#errorHandler}. If you want to use your own {@link PCommandErrorHandler},
-     * we recommend you to call this method in {@link PCommand#init()}.
-     *
-     * @param errorHandler The new error handler
-     *
-     * @see PCommand#getErrorHandler()
-     */
-    public void setErrorHandler(PCommandErrorHandler errorHandler) {
-        this.errorHandler = errorHandler;
-    }
-
-    /**
      * Getter of all sub-commands recursively. So that, it also calls this function with the sub-commands. Be aware that
      * the returned {@link Set} will not contain the command itself.
      *
@@ -575,7 +536,6 @@ public abstract class PCommand {
      * root name. If this is sub-command, this will call this method on his parent.
      *
      * @return The root command name
-     *
      * @see PSubCommand#getRootCommandName()
      */
     public String getRootCommandName() {
@@ -589,7 +549,6 @@ public abstract class PCommand {
      * suitable for this usage.
      *
      * @return The full name of the command
-     *
      * @see PSubCommand#getFullName()
      */
     public String getFullName() {
@@ -610,7 +569,6 @@ public abstract class PCommand {
      * Getter of {@link PCommand#commandRegistry}.
      *
      * @return The command registry of the command
-     *
      * @see PCommand#setCommandRegistry(PCommandRegistry)
      */
     public PCommandRegistry getCommandRegistry() {
@@ -618,8 +576,21 @@ public abstract class PCommand {
     }
 
     /**
-     * @return The length of the current args
+     * Setter of the {@link PCommand#commandRegistry}. This will also set the command registry for the sub-commands.
+     * Use only this method if you know what you are doing. By default, the context is set in
+     * {@link PCommandContainer#PCommandContainer(PCommand, PCommandRegistry, JavaPlugin)}.
      *
+     * @param commandRegistry The new command registry
+     * @see PCommand#getCommandRegistry()
+     */
+    public void setCommandRegistry(PCommandRegistry commandRegistry) {
+        this.commandRegistry = commandRegistry;
+
+        this.subCommands.values().forEach(subCommand -> subCommand.setCommandRegistry(commandRegistry));
+    }
+
+    /**
+     * @return The length of the current args
      * @see PCommand#getCurrentArgs()
      */
     public int getCurrentArgsLength() {
@@ -702,7 +673,6 @@ public abstract class PCommand {
      * Getter of {@link PCommand#context}.
      *
      * @return The context of the command
-     *
      * @see PCommand#setContext(PCommandContext)
      */
     public PCommandContext getContext() {
@@ -710,13 +680,36 @@ public abstract class PCommand {
     }
 
     /**
+     * Setter of the {@link PCommand#context}. This will also set the command context for the sub-commands.
+     * Use only this method if you know what you are doing. By default, the context is set in {@link PCommand#PCommand()}.
+     *
+     * @param context The new command context
+     * @see PCommand#getContext()
+     */
+    public void setContext(PCommandContext context) {
+        this.context = context;
+
+        this.subCommands.values().forEach(subCommand -> subCommand.setContext(context));
+    }
+
+    /**
      * Getter of {@link PCommand#errorHandler}.
      *
      * @return The error handler of the command
-     *
      * @see PCommand#setErrorHandler(PCommandErrorHandler)
      */
     public PCommandErrorHandler getErrorHandler() {
         return errorHandler;
+    }
+
+    /**
+     * Setter of the {@link PCommand#errorHandler}. If you want to use your own {@link PCommandErrorHandler},
+     * we recommend you to call this method in {@link PCommand#init()}.
+     *
+     * @param errorHandler The new error handler
+     * @see PCommand#getErrorHandler()
+     */
+    public void setErrorHandler(PCommandErrorHandler errorHandler) {
+        this.errorHandler = errorHandler;
     }
 }

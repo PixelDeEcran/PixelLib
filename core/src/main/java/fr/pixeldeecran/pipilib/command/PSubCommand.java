@@ -13,17 +13,6 @@ public abstract class PSubCommand<T extends PCommand> extends PCommand {
     private T parent;
 
     /**
-     * Setter of {@link PSubCommand#parent}. Be aware that is just to set the instance of the sub-command,
-     * you will need to do more work in order to actually relocate a sub-command to another command.
-     *
-     * @param parent The new parent of the sub-command
-     */
-    @SuppressWarnings("unchecked")
-    public void setParent(PCommand parent) {
-        this.parent = (T) parent;
-    }
-
-    /**
      * {@inheritDoc}
      *
      * @return The root command name
@@ -75,5 +64,16 @@ public abstract class PSubCommand<T extends PCommand> extends PCommand {
      */
     public T getParent() {
         return parent;
+    }
+
+    /**
+     * Setter of {@link PSubCommand#parent}. Be aware that is just to set the instance of the sub-command,
+     * you will need to do more work in order to actually relocate a sub-command to another command.
+     *
+     * @param parent The new parent of the sub-command
+     */
+    @SuppressWarnings("unchecked")
+    public void setParent(PCommand parent) {
+        this.parent = (T) parent;
     }
 }

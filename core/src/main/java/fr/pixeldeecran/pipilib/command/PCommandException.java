@@ -20,7 +20,7 @@ public class PCommandException extends RuntimeException {
      * Constructor of {@link PCommandException}. This constructor is mostly called when an unexpected error occurs.
      *
      * @param errorName The name of the error
-     * @param cause The cause of the error
+     * @param cause     The cause of the error
      */
     public PCommandException(String errorName, Throwable cause) {
         super(errorName, cause);

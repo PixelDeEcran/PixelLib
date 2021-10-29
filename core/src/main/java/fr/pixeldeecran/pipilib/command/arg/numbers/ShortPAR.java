@@ -19,7 +19,7 @@ public class ShortPAR extends NumberPAR<Short> {
     /**
      * Return the name of the error. <br>
      * With a {@link ShortPAR}, the errors can be : <br>
-     *  - "SHORT_NON_VALID_FORMAT" : The argument is not a valid {@link Short}
+     * - "SHORT_NON_VALID_FORMAT" : The argument is not a valid {@link Short}
      *
      * @param arg The argument
      * @return The error name

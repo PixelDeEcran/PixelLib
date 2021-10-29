@@ -11,6 +11,7 @@ For now, it can only helps you to simplify the creation of commands.
 First, you need to clone this repo.
 
 Then to build the plugin, execute the following command :
+
 ```bash
 mvn clean package
 ```

@@ -19,7 +19,7 @@ public class IntegerPAR extends NumberPAR<Integer> {
     /**
      * Return the name of the error. <br>
      * With a {@link IntegerPAR}, the errors can be : <br>
-     *  - "INTEGER_NON_VALID_FORMAT" : The argument is not a valid {@link Integer}
+     * - "INTEGER_NON_VALID_FORMAT" : The argument is not a valid {@link Integer}
      *
      * @param arg The argument
      * @return The error name

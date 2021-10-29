@@ -29,8 +29,8 @@ public class BooleanPAR implements PArgReader<Boolean> {
     /**
      * Return the name of the error. <br>
      * With a {@link BooleanPAR}, the errors can be : <br>
-     *  - "ARG_NULL" : The argument is null <br>
-     *  - "BOOLEAN_NON_VALID_FORMAT" : The argument is not a valid {@link Boolean}
+     * - "ARG_NULL" : The argument is null <br>
+     * - "BOOLEAN_NON_VALID_FORMAT" : The argument is not a valid {@link Boolean}
      *
      * @param arg The argument
      * @return The error name

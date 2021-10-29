@@ -82,6 +82,15 @@ public class PCommandContext {
     private String currentError;
 
     /**
+     * Getter of {@link PCommandContext#currentCommand}.
+     *
+     * @return The current command
+     */
+    public PCommand getCurrentCommand() {
+        return currentCommand;
+    }
+
+    /**
      * Setter of {@link PCommandContext#currentCommand}.
      *
      * @param currentCommand The new current command
@@ -90,6 +99,15 @@ public class PCommandContext {
     public PCommandContext setCurrentCommand(PCommand currentCommand) {
         this.currentCommand = currentCommand;
         return this;
+    }
+
+    /**
+     * Getter of {@link PCommandContext#currentSender}.
+     *
+     * @return The current command sender
+     */
+    public CommandSender getCurrentSender() {
+        return currentSender;
     }
 
     /**
@@ -104,6 +122,15 @@ public class PCommandContext {
     }
 
     /**
+     * Getter of {@link PCommandContext#currentArgs}.
+     *
+     * @return The current arguments
+     */
+    public String[] getCurrentArgs() {
+        return currentArgs;
+    }
+
+    /**
      * Setter of {@link PCommandContext#currentArgs}.
      *
      * @param currentArgs The new current arguments
@@ -112,6 +139,15 @@ public class PCommandContext {
     public PCommandContext setCurrentArgs(String[] currentArgs) {
         this.currentArgs = currentArgs;
         return this;
+    }
+
+    /**
+     * Getter of {@link PCommandContext#currentIndex}.
+     *
+     * @return The current index
+     */
+    public int getCurrentIndex() {
+        return currentIndex;
     }
 
     /**
@@ -126,6 +162,15 @@ public class PCommandContext {
     }
 
     /**
+     * Getter of {@link PCommandContext#currentAction}.
+     *
+     * @return The current {@link Action}
+     */
+    public Action getCurrentAction() {
+        return currentAction;
+    }
+
+    /**
      * Setter of {@link PCommandContext#currentAction}.
      *
      * @param currentAction The new current {@link Action}
@@ -134,6 +179,15 @@ public class PCommandContext {
     public PCommandContext setCurrentAction(Action currentAction) {
         this.currentAction = currentAction;
         return this;
+    }
+
+    /**
+     * Getter of {@link PCommandContext#currentPermission}.
+     *
+     * @return The current permission
+     */
+    public String getCurrentPermission() {
+        return currentPermission;
     }
 
     /**
@@ -148,6 +202,15 @@ public class PCommandContext {
     }
 
     /**
+     * Getter of {@link PCommandContext#currentArgReader}.
+     *
+     * @return The current {@link PArgReader}
+     */
+    public PArgReader<?> getCurrentArgReader() {
+        return currentArgReader;
+    }
+
+    /**
      * Setter of {@link PCommandContext#currentArgReader}.
      *
      * @param currentArgReader The new current {@link PArgReader}
@@ -156,6 +219,15 @@ public class PCommandContext {
     public PCommandContext setCurrentArgReader(PArgReader<?> currentArgReader) {
         this.currentArgReader = currentArgReader;
         return this;
+    }
+
+    /**
+     * Getter of {@link PCommandContext#currentSentenceReader}.
+     *
+     * @return The current {@link PSentenceReader}
+     */
+    public PSentenceReader<?> getCurrentSentenceReader() {
+        return currentSentenceReader;
     }
 
     /**
@@ -170,6 +242,15 @@ public class PCommandContext {
     }
 
     /**
+     * Getter of {@link PCommandContext#currentError}.
+     *
+     * @return The current error
+     */
+    public String getCurrentError() {
+        return currentError;
+    }
+
+    /**
      * Setter of {@link PCommandContext#currentError}.
      *
      * @param currentError The new current error
@@ -178,87 +259,6 @@ public class PCommandContext {
     public PCommandContext setCurrentError(String currentError) {
         this.currentError = currentError;
         return this;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentCommand}.
-     *
-     * @return The current command
-     */
-    public PCommand getCurrentCommand() {
-        return currentCommand;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentSender}.
-     *
-     * @return The current command sender
-     */
-    public CommandSender getCurrentSender() {
-        return currentSender;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentArgs}.
-     *
-     * @return The current arguments
-     */
-    public String[] getCurrentArgs() {
-        return currentArgs;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentIndex}.
-     *
-     * @return The current index
-     */
-    public int getCurrentIndex() {
-        return currentIndex;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentAction}.
-     *
-     * @return The current {@link Action}
-     */
-    public Action getCurrentAction() {
-        return currentAction;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentPermission}.
-     *
-     * @return The current permission
-     */
-    public String getCurrentPermission() {
-        return currentPermission;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentArgReader}.
-     *
-     * @return The current {@link PArgReader}
-     */
-    public PArgReader<?> getCurrentArgReader() {
-        return currentArgReader;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentSentenceReader}.
-     *
-     * @return The current {@link PSentenceReader}
-     */
-    public PSentenceReader<?> getCurrentSentenceReader() {
-        return currentSentenceReader;
-    }
-
-    /**
-     * Getter of {@link PCommandContext#currentError}.
-     *
-     * @return The current error
-     */
-    public String getCurrentError() {
-        return currentError;
     }
 
     public enum Action {

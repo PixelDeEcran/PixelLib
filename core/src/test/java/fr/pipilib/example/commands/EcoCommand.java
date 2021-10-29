@@ -2,10 +2,10 @@ package fr.pipilib.example.commands;
 
 import fr.pipilib.example.commands.economy.AddCommand;
 import fr.pipilib.example.commands.economy.RemoveCommand;
+import fr.pipilib.example.commands.economy.SeeCommand;
 import fr.pipilib.example.commands.economy.SetCommand;
 import fr.pixeldeecran.pipilib.command.PCommand;
 import fr.pixeldeecran.pipilib.command.PCommandInfo;
-import fr.pipilib.example.commands.economy.SeeCommand;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 

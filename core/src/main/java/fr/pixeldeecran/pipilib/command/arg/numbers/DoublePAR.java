@@ -19,7 +19,7 @@ public class DoublePAR extends NumberPAR<Double> {
     /**
      * Return the name of the error. <br>
      * With a {@link DoublePAR}, the errors can be : <br>
-     *  - "DOUBLE_NON_VALID_FORMAT" : The argument is not a valid {@link Double}
+     * - "DOUBLE_NON_VALID_FORMAT" : The argument is not a valid {@link Double}
      *
      * @param arg The argument
      * @return The error name

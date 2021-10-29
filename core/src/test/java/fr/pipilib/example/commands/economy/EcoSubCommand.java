@@ -1,7 +1,7 @@
 package fr.pipilib.example.commands.economy;
 
-import fr.pixeldeecran.pipilib.command.PSubCommand;
 import fr.pipilib.example.commands.EcoCommand;
+import fr.pixeldeecran.pipilib.command.PSubCommand;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 

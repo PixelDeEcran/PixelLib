@@ -19,7 +19,7 @@ public class CharPAR implements PArgReader<Character> {
     /**
      * Return the name of the error. <br>
      * With a {@link CharPAR}, the errors can be : <br>
-     *  - "EMPTY_STRING" : The argument is an empty {@link String} -> its length is 0
+     * - "EMPTY_STRING" : The argument is an empty {@link String} -> its length is 0
      *
      * @param arg The argument
      * @return The error name

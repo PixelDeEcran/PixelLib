@@ -21,7 +21,7 @@ import java.util.jar.Manifest;
 /**
  * This is just an interface, which allows you to do things your plugin need to start properly (like for example
  * download a library for a specific platform)
- *
+ * <p>
  * Please here, do not reference any others classes which could be asking the classloader for a class which doesn't exist.
  */
 public class PBootstrapPlugin extends JavaPlugin {
@@ -104,7 +104,7 @@ public class PBootstrapPlugin extends JavaPlugin {
         SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(pluginManager.getClass(), "commandMap", pluginManager);
         Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getFieldValue(pluginManager.getClass(), "knownCommands", pluginManager);
         if (commandMap != null && knownCommands != null) {
-            for (Iterator<Map.Entry<String, Command>> iterator = knownCommands.entrySet().iterator(); iterator.hasNext();) {
+            for (Iterator<Map.Entry<String, Command>> iterator = knownCommands.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, Command> entry = iterator.next();
 
                 if (entry.getValue() instanceof PluginCommand) {

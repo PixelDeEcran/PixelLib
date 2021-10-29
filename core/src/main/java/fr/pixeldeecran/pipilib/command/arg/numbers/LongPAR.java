@@ -19,7 +19,7 @@ public class LongPAR extends NumberPAR<Long> {
     /**
      * Return the name of the error. <br>
      * With a {@link LongPAR}, the errors can be : <br>
-     *  - "LONG_NON_VALID_FORMAT" : The argument is not a valid {@link Long}
+     * - "LONG_NON_VALID_FORMAT" : The argument is not a valid {@link Long}
      *
      * @param arg The argument
      * @return The error name

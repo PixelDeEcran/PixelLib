@@ -24,7 +24,7 @@ public class PlayerPAR implements PArgReader<Player> {
     /**
      * Return the name of the error. <br>
      * With a {@link CharPAR}, the errors can be : <br>
-     *  - "NOT_ONLINE_PLAYER" : The specified player is not online
+     * - "NOT_ONLINE_PLAYER" : The specified player is not online
      *
      * @param arg The argument
      * @return The error name

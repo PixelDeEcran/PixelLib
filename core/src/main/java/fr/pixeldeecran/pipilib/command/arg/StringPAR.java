@@ -19,7 +19,7 @@ public class StringPAR implements PArgReader<String> {
     /**
      * Return the name of the error. <br>
      * With a {@link StringPAR}, the errors can be : <br>
-     *  - "CRITICAL" : An unexpected error
+     * - "CRITICAL" : An unexpected error
      *
      * @param arg The argument
      * @return The error name

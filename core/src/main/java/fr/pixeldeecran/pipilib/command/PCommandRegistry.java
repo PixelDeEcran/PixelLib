@@ -146,10 +146,9 @@ public class PCommandRegistry {
     /**
      * Register a {@link PArgReader}.
      *
-     * @param typeClass The type class
+     * @param typeClass      The type class
      * @param argReaderClass The argument reader instance
-     * @param <T> The type parameter
-     *
+     * @param <T>            The type parameter
      * @see PCommandRegistry#getArgReader(Object)
      */
     public <T> void registerArgReader(Class<T> typeClass, PArgReader<T> argReaderClass) {
@@ -159,10 +158,9 @@ public class PCommandRegistry {
     /**
      * Register a {@link PSentenceReader}
      *
-     * @param typeClass The type class
+     * @param typeClass           The type class
      * @param sentenceReaderClass The sentence reader instance
-     * @param <T> The type parameter
-     *
+     * @param <T>                 The type parameter
      * @see PCommandRegistry#getSentenceReader(Object)
      */
     public <T> void registerSentenceReader(Class<T> typeClass, PSentenceReader<T> sentenceReaderClass) {
@@ -173,7 +171,7 @@ public class PCommandRegistry {
      * Get a {@link PArgReader} from a type.
      *
      * @param typeClass The type class
-     * @param <T> The type parameter
+     * @param <T>       The type parameter
      * @return The argument reader instance for the specified type
      */
     @SuppressWarnings("all")
@@ -185,7 +183,7 @@ public class PCommandRegistry {
      * Get a {@link PSentenceReader} from a type.
      *
      * @param typeClass The type class
-     * @param <T> The type paramter
+     * @param <T>       The type paramter
      * @return The sentence reader instance for the specified type
      */
     @SuppressWarnings("all")
@@ -196,12 +194,12 @@ public class PCommandRegistry {
     /**
      * Register all commands of a specified package. It will search for all class in the package which are subtype of
      * {@link PCommand}. Before trying to register a command, it will check these conditions : <br>
-     *  - The class is not PSubCommand <br>
-     *  - The class is not abstract and is not an interface <br>
-     *  - The annotation {@link PCommandExist} is present <br>
-     *  - The class is not a sub-command (the class doesn't have {@link PSubCommand} in his superclasses) <br>
-     *  - The class has an empty constructor <br>
-     *  If these conditions are met, the command will be registered.
+     * - The class is not PSubCommand <br>
+     * - The class is not abstract and is not an interface <br>
+     * - The annotation {@link PCommandExist} is present <br>
+     * - The class is not a sub-command (the class doesn't have {@link PSubCommand} in his superclasses) <br>
+     * - The class has an empty constructor <br>
+     * If these conditions are met, the command will be registered.
      *
      * @param packageName The package name
      */
@@ -211,17 +209,19 @@ public class PCommandRegistry {
         reflections.getSubTypesOf(PCommand.class).forEach(commandClass -> {
             try {
                 if (commandClass.getPackage().getName().startsWith(packageName) && commandClass != PSubCommand.class
-                        && !Modifier.isAbstract(commandClass.getModifiers()) && !Modifier.isInterface(commandClass.getModifiers())
-                        && commandClass.isAnnotationPresent(PCommandExist.class)) {
+                    && !Modifier.isAbstract(commandClass.getModifiers()) && !Modifier.isInterface(commandClass.getModifiers())
+                    && commandClass.isAnnotationPresent(PCommandExist.class)) {
                     try {
                         commandClass.asSubclass(PSubCommand.class); // check if it's not a sub command
                         return;
-                    } catch (ClassCastException ignored) {}
+                    } catch (ClassCastException ignored) {
+                    }
                     commandClass.getDeclaredConstructor(); // check if it has an empty constructor
 
                     this.registerCommand(commandClass);
                 }
-            } catch (NoSuchMethodException ignored) {}
+            } catch (NoSuchMethodException ignored) {
+            }
         });
     }
 
@@ -249,7 +249,7 @@ public class PCommandRegistry {
      */
     public void lookForCommandMap() {
         this.commandMap = (CommandMap) ReflectionUtils.getFieldValue(this.plugin.getServer().getClass(), "commandMap",
-                Bukkit.getServer());
+            Bukkit.getServer());
     }
 
     /**

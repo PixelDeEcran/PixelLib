@@ -35,9 +35,9 @@ public class PCommandContainer extends Command implements PluginIdentifiableComm
     /**
      * Main constructor of PCommandContainer. This is where we set the command registry and call {@link PCommand#init()}.
      *
-     * @param command The command
+     * @param command         The command
      * @param commandRegistry The command registry
-     * @param plugin The plugin's instance
+     * @param plugin          The plugin's instance
      */
     public PCommandContainer(PCommand command, PCommandRegistry commandRegistry, JavaPlugin plugin) {
         super(command.getName());
@@ -56,9 +56,9 @@ public class PCommandContainer extends Command implements PluginIdentifiableComm
      * Called when the command is executed. It calls {@link PCommand#internallyExecute(CommandSender, String[])} and
      * catch exceptions.
      *
-     * @param sender The command sender
+     * @param sender       The command sender
      * @param commandLabel The label used to reference the command
-     * @param args The arguments used
+     * @param args         The arguments used
      * @return Was the command successful or not?
      */
     @Override
@@ -80,8 +80,8 @@ public class PCommandContainer extends Command implements PluginIdentifiableComm
      * {@link PCommand#internallyTabCompleteFor(CommandSender, String[])} and catch exceptions.
      *
      * @param sender The command sender
-     * @param alias The label used to reference the command
-     * @param args The arguments used
+     * @param alias  The label used to reference the command
+     * @param args   The arguments used
      * @return The completion list
      */
     @Override

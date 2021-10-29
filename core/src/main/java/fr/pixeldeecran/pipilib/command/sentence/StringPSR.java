@@ -29,7 +29,7 @@ public class StringPSR implements PSentenceReader<String> {
     /**
      * Return the name of the error. <br>
      * With a {@link StringPAR}, the errors can be : <br>
-     *  - "CRITICAL" : An unexpected error
+     * - "CRITICAL" : An unexpected error
      *
      * @param sentence The sentence
      * @return The error name

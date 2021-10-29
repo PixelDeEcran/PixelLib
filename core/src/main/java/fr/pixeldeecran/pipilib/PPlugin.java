@@ -27,7 +27,7 @@ public abstract class PPlugin extends JavaPlugin {
      *
      * @param packageName The name of the package
      */
-     public void registerAllCommandsIn(String packageName) {
+    public void registerAllCommandsIn(String packageName) {
         this.commandRegistry.registerAllCommandsIn(packageName);
     }
 

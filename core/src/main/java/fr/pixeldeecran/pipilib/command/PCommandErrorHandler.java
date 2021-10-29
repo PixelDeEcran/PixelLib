@@ -49,7 +49,7 @@ public class PCommandErrorHandler {
      * 4 : current command usage (String)
      *
      * @param errorName The name of the error
-     * @param message The message which will be formatted and sent
+     * @param message   The message which will be formatted and sent
      */
     public void registerErrorMessage(String errorName, String message) {
         this.registerErrorAction(errorName, context -> context.getCurrentSender().sendMessage(String.format(
@@ -65,7 +65,7 @@ public class PCommandErrorHandler {
      * Register an error action for an error name.
      *
      * @param errorName The name of the error
-     * @param action The action which will be executed when the error occurs
+     * @param action    The action which will be executed when the error occurs
      */
     public void registerErrorAction(String errorName, Consumer<PCommandContext> action) {
         this.errorsActions.put(errorName, action);
@@ -85,7 +85,7 @@ public class PCommandErrorHandler {
     /**
      * When an error happened caused by an exception.
      *
-     * @param context The command context
+     * @param context   The command context
      * @param exception The exception which occurred
      */
     public void whenError(PCommandContext context, Exception exception) {

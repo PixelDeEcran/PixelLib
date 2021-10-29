@@ -19,7 +19,7 @@ public class BytePAR extends NumberPAR<Byte> {
     /**
      * Return the name of the error. <br>
      * With a {@link BytePAR}, the errors can be : <br>
-     *  - "BYTE_NON_VALID_FORMAT" : The argument is not a valid {@link Byte}
+     * - "BYTE_NON_VALID_FORMAT" : The argument is not a valid {@link Byte}
      *
      * @param arg The argument
      * @return The error name
