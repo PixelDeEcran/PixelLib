@@ -1,14 +1,20 @@
 package fr.pixeldeecran.pipilib.boostrap;
 
 import fr.pixeldeecran.pipilib.utils.ReflectionUtils;
+import me.tongfei.progressbar.ProgressBar;
+import me.tongfei.progressbar.ProgressBarBuilder;
+import me.tongfei.progressbar.ProgressBarStyle;
 import org.apache.commons.io.IOUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.Event;
+import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.*;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -17,6 +23,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarOutputStream;
 import java.util.jar.Manifest;
+import java.util.logging.Level;
 
 /**
  * This is just an interface, which allows you to do things your plugin need to start properly (like for example
@@ -25,6 +32,10 @@ import java.util.jar.Manifest;
  * Please here, do not reference any others classes which could be asking the classloader for a class which doesn't exist.
  */
 public class PBootstrapPlugin extends JavaPlugin {
+
+    // Got from https://api.adoptium.net/v3/info/release_names
+    // We assume the user is running java 8 for obvious reasons.
+    public static final String LTS_JDK_RELEASE_NAME = "jdk8u302-b08";
 
     public void startPlugin(String pluginYmlPath) {
         try {
@@ -93,16 +104,11 @@ public class PBootstrapPlugin extends JavaPlugin {
         }
 
         // Remove the listeners
-        Map<Event, SortedSet<RegisteredListener>> listeners = (Map<Event, SortedSet<RegisteredListener>>) ReflectionUtils.getFieldValue(pluginManager.getClass(), "lookupNames", pluginManager);
-        if (listeners != null) {
-            for (SortedSet<RegisteredListener> set : listeners.values()) {
-                set.removeIf(registeredListener -> registeredListener.getPlugin() == plugin);
-            }
-        }
+        HandlerList.unregisterAll(plugin);
 
         // Remove the commands
-        SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(pluginManager.getClass(), "commandMap", pluginManager);
-        Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getFieldValue(pluginManager.getClass(), "knownCommands", pluginManager);
+        SimpleCommandMap commandMap = (SimpleCommandMap) ReflectionUtils.getFieldValue(Bukkit.getServer().getClass(), "commandMap", Bukkit.getServer());
+        Map<String, Command> knownCommands = (Map<String, Command>) ReflectionUtils.getFieldValue(SimpleCommandMap.class, "knownCommands", commandMap);
         if (commandMap != null && knownCommands != null) {
             for (Iterator<Map.Entry<String, Command>> iterator = knownCommands.entrySet().iterator(); iterator.hasNext(); ) {
                 Map.Entry<String, Command> entry = iterator.next();
@@ -120,5 +126,88 @@ public class PBootstrapPlugin extends JavaPlugin {
                 }
             }
         }
+    }
+
+    /**
+     * This is based on https://javadoc.io/doc/net.bytebuddy/byte-buddy-agent/1.9.11/net/bytebuddy/agent/ByteBuddyAgent.html#install--
+     * We are only downloading JDK and setup the tools required if the java version is 8 or lower.
+     */
+    public void requireByteBuddyAgent() {
+        int javaVersion = this.getJavaVersion();
+        this.getLogger().info("Running Java " + javaVersion);
+
+        if (javaVersion <= 8) {
+            if (ToolProvider.getSystemJavaCompiler() == null) {
+                this.getLogger().info("Running JRE");
+
+                File agentDir = new File(this.getDataFolder(), "agent/");
+                if (!agentDir.exists()) {
+                    agentDir.mkdirs();
+                }
+
+                File toolsFile = new File(agentDir, "tools.jar");
+                File windowsLib = new File(agentDir, "attach.dll");
+                File linuxLib = new File(agentDir, "libattach.so");
+                File macosLib = new File(agentDir, "libattach.dylib");
+                if (toolsFile.exists() && (windowsLib.exists() || linuxLib.exists() || macosLib.exists())) {
+                    AgentToolsInstaller installer = new AgentToolsInstaller(null, agentDir);
+                    installer.link();
+                } else {
+                    JDKDownloader downloader = new JDKDownloader(this);
+                    downloader.setArchitecture(System.getProperty("os.arch").contains("32") ? "x32" : "x64");
+
+                    String os = System.getProperty("os.name", "generic").toLowerCase(Locale.ENGLISH);
+                    if (os.contains("mac") || os.contains("darwin")) {
+                        downloader.setOS("mac");
+                    } else if (os.contains("win")) {
+                        downloader.setOS("windows");
+                    } else if (os.contains("nux")) {
+                        downloader.setOS("linux");
+                    } else {
+                        return;
+                    }
+
+                    try (ProgressBar bar = new ProgressBarBuilder()
+                        .setTaskName("Download JDK")
+                        .setUnit("MiB", 1048576)
+                        .setStyle(ProgressBarStyle.ASCII)
+                        .showSpeed()
+                        .build()) {
+
+                        downloader.downloadJDK(PBootstrapPlugin.LTS_JDK_RELEASE_NAME, max -> {
+                            bar.maxHint(max);
+                            bar.stepTo(0);
+                        }, bar::stepTo).ifPresent(jdkFile -> {
+                            AgentToolsInstaller agentInstaller = new AgentToolsInstaller(jdkFile, agentDir);
+                            try {
+                                agentInstaller.extract();
+                                agentInstaller.link();
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        });
+                    }
+                }
+            } else {
+                this.getLogger().info("Running JDK");
+            }
+        }
+    }
+
+    // From https://stackoverflow.com/a/2591122
+    public int getJavaVersion() {
+        String version = System.getProperty("java.version");
+
+        if (version.startsWith("1.")) {
+            version = version.substring(2, 3);
+        } else {
+            int dot = version.indexOf(".");
+
+            if (dot != -1) {
+                version = version.substring(0, dot);
+            }
+        }
+
+        return Integer.parseInt(version);
     }
 }

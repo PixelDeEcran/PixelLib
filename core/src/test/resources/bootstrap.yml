@@ -1,6 +1,6 @@
 name: Example
 version: ${project.version}
-main: fr.pipilib.example.BootstrapPlugin
+main: fr.pipilib.example.ExamplePlugin
 authors: [ PixelDeEcran ]
 description: Demo of the PipiLib
 website: ${project.url}
