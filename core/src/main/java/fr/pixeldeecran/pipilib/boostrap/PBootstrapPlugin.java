@@ -18,6 +18,8 @@ import javax.tools.ToolProvider;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
 import java.util.*;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -151,7 +153,11 @@ public class PBootstrapPlugin extends JavaPlugin {
                 File macosLib = new File(agentDir, "libattach.dylib");
                 if (toolsFile.exists() && (windowsLib.exists() || linuxLib.exists() || macosLib.exists())) {
                     AgentToolsInstaller installer = new AgentToolsInstaller(null, agentDir);
-                    installer.link();
+                    try {
+                        installer.link();
+                    } catch (NoSuchMethodException | ClassNotFoundException | MalformedURLException | InvocationTargetException | IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
                 } else {
                     JDKDownloader downloader = new JDKDownloader(this);
                     downloader.setArchitecture(System.getProperty("os.arch").contains("32") ? "x32" : "x64");
@@ -182,7 +188,7 @@ public class PBootstrapPlugin extends JavaPlugin {
                             try {
                                 agentInstaller.extract();
                                 agentInstaller.link();
-                            } catch (IOException e) {
+                            } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
                                 e.printStackTrace();
                             }
                         });
