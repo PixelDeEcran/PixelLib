@@ -1,10 +1,12 @@
-# PipiLib
+# PixelLib
 
 Simple and Light Plugin Lib compatible with Bukkit.
 
 ## Current Features
 
-For now, it can only helps you to simplify the creation of commands.
+For now, it can only help you to simplify the creation of commands, see [commands.md](doc/commands.md).
+
+New: Bootstrap feature, useful for creating agent in order to modify the code of CraftBukkit.
 
 ## Building
 

@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.pixeldeecran</groupId>
-    <artifactId>pipilib-parent</artifactId>
+    <artifactId>pixellib-parent</artifactId>
     <version>1.1.0</version>
     <packaging>pom</packaging>
 
-    <name>PipiLib</name>
+    <name>PixelLib</name>
     <description>Small library to simplify the creation of plugin</description>
     <url>https://github.com/PixelDeEcran</url>
 

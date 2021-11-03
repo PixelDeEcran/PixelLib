@@ -4,13 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>pipilib</artifactId>
+    <artifactId>pixellib</artifactId>
     <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <parent>
         <groupId>fr.pixeldeecran</groupId>
-        <artifactId>pipilib-parent</artifactId>
+        <artifactId>pixellib-parent</artifactId>
         <version>1.1.0</version>
     </parent>
 
@@ -30,7 +30,7 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                     <excludes>
-                        <exclude>fr.pixeldeecran.pipilibtest</exclude>
+                        <exclude>fr.pixellib.example</exclude>
                     </excludes>
                 </configuration>
             </plugin>
@@ -49,19 +49,19 @@
                             <relocations>
                                 <relocation>
                                     <pattern>org.apache.commons.io</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.commons-io</shadedPattern>
+                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.commons-io</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.apache.commons.httpclient</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.commons-httpclient</shadedPattern>
+                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.commons-httpclient</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>org.reflections</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.reflections</shadedPattern>
+                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.reflections</shadedPattern>
                                 </relocation>
                                 <relocation>
                                     <pattern>javassist</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pipilib.libs.javassist</shadedPattern>
+                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.javassist</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>

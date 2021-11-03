@@ -1,6 +1,6 @@
 name: Example
 version: ${project.version}
-main: fr.pipilib.example.ExamplePlugin
+main: fr.pixellib.example.ExamplePlugin
 authors: [ PixelDeEcran ]
-description: Demo of the PipiLib
+description: Demo of the PixelLib
 website: ${project.url}

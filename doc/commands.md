@@ -5,7 +5,7 @@ learn how it works internally in order to more understand what you can do, and h
 
 ## Basic Example
 
-First, let's see a basic [example](../core/src/test/java/fr/pipilib/example/commands/ExampleCommand.java) :
+First, let's see a basic [example](../core/src/test/java/fr/pixellib/example/commands/ExampleCommand.java) :
 
 ```java
 @PCommandInfo( // Describe the example command
@@ -13,7 +13,7 @@ First, let's see a basic [example](../core/src/test/java/fr/pipilib/example/comm
     aliases = "examples", // The aliases of the command
     description = "Simple Example Command", // The description of the command
     usage = "<number> [color]", // The usage of the command, <> for required args, and [] for optional args
-    permission = "fr.pipilib.commands.example" // The permission of the command
+    permission = "fr.pixellib.commands.example" // The permission of the command
 )
 public class ExampleCommand extends PCommand { // extends PCommand, this tells that this is a command and not a subcommand
 
@@ -42,14 +42,14 @@ the message.
 > What if I want to create a command with sub commands?
 
 As you will see, it's very simple, and the library does most of the work while staying flexible.  
-Let's see another [example](../core/src/test/java/fr/pipilib/example/commands/MessageCommand.java) :
+Let's see another [example](../core/src/test/java/fr/pixellib/example/commands/MessageCommand.java) :
 
 ```java
 @PCommandInfo(
     name = "message",
     aliases = {"msg"},
     description = "A Message command",
-    permission = "fr.pipilib.commands.message",
+    permission = "fr.pixellib.commands.message",
     subCommands = {
         HelpCommand.class,
         BroadcastCommand.class,
@@ -89,7 +89,7 @@ Now let's see how we can go about a help command :
 @PCommandInfo(
     name = "help",
     description = "Display the available commands",
-    permission = "fr.pipilib.commands.message.help"
+    permission = "fr.pixellib.commands.message.help"
     // We don't need to specify the usage because there are no arguments used
 )
 public class HelpCommand extends PSubCommand<MessageCommand> { // We specify the parent command
@@ -128,7 +128,7 @@ Now, let's see how we go about reading a group of arguments :
     aliases = "bc",
     description = "Broadcast a message",
     usage = "<message>", // Specify the usage
-    permission = "fr.pipilib.commands.message.broadcast"
+    permission = "fr.pixellib.commands.message.broadcast"
 )
 public class BroadcastCommand extends PSubCommand<MessageCommand> {
 
@@ -155,7 +155,7 @@ Finally, let's see a more complex one which combines a lot of things that we lea
     name = "send",
     description = "Send a message to a specific player",
     usage = "<player> <message>",
-    permission = "fr.pipilib.commands.message.send"
+    permission = "fr.pixellib.commands.message.send"
 )
 public class SendCommand extends PSubCommand<MessageCommand> {
 
@@ -187,7 +187,7 @@ When we don't specify a first argument or an invalid subcommand, we would like t
     name = "message",
     aliases = {"msg"},
     description = "A Message command",
-    permission = "fr.pipilib.commands.message",
+    permission = "fr.pixellib.commands.message",
     subCommands = {
         HelpCommand.class,
         BroadcastCommand.class,
@@ -228,7 +228,7 @@ when the error occurs, we can have enough information to send a precise error. W
 reason, at which index, with which arguments, and at which state.
 
 Here are all the information we can have access to : (
-from [PCommandContext](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandContext.java))
+from [PCommandContext](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandContext.java))
 
 ```java
 public class PCommandContext {
@@ -243,7 +243,7 @@ public class PCommandContext {
 ```
 
 Now, let's dive into the code of
-the [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+the [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java)
 to understand how it works and how we can use it in order to be efficient.
 
 First, we have two fields, which are self describing :
@@ -304,7 +304,7 @@ When an error is detected, we can catch this error, and send a message describin
 
 Notice the fact that there is two methods, one when there is an exception, and another when there isn't. The one with
 the exception is called when an exception other
-than [PCommandException](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java).
+than [PCommandException](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandException.java).
 
 Here you can see the `registerDefaults()` method which as the name says, register the default reason message.
 
@@ -334,7 +334,7 @@ Here you can see the `registerDefaults()` method which as the name says, registe
 > But how do we catch these errors and how do we identify them?
 
 To understand, we first need to
-visit [PCommandContainer](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandContainer.java)
+visit [PCommandContainer](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandContainer.java)
 and check this part :
 
 ```java
@@ -358,14 +358,14 @@ which does some works to simplify your life)
 
 After, we check for two different types of exception :
 
-- The [PCommandException](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
+- The [PCommandException](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandException.java)
   which is catch for a non-critical exception and is mainly caused by the user who executed the command.
 - The Exception, which means that there were an error in your command implementation (in most cases).
 
 To understand where does
-this [PCommandException](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandException.java)
+this [PCommandException](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandException.java)
 comes from, we need to see some parts of the code
-of [PCommand](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommand.java) :
+of [PCommand](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommand.java) :
 
 ```java
     @SuppressWarnings("unchecked")
@@ -415,7 +415,7 @@ Notice the function `errorCause` at `throw new PCommandException(argReader.error
 To understand what it means, we first need to understand how we can parse the arguments.
 
 To parse an argument, we have an interface
-called [PArgReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) :
+called [PArgReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/arg/PArgReader.java) :
 
 ```java
 public interface PArgReader<T> {
@@ -433,7 +433,7 @@ the arg, and finally the third one which returns the display name
 (actually not used, but it can still be useful information in the future).
 
 Let's see a simple implementation of
-the [PArgReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java) :
+the [PArgReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/arg/PArgReader.java) :
 
 ```java
 public class CharPAR implements PArgReader<Character> {
@@ -462,12 +462,12 @@ You can also see in the `errorCause` function the name of the error. Note the fa
 the `read` function returns `null`.
 
 These principles are also applied
-with [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java).
+with [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/sentence/PSentenceReader.java).
 
 > Now that I understood how the library handles errors, how can I customize his behaviours?
 
 To do so, you can create your
-own [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+own [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java)
 in order to register your custom messages!
 
 ```java
@@ -483,24 +483,24 @@ public class ExampleCommand extends PCommand {
 ```
 
 Here, we just create our
-own [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java), register
+own [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java), register
 the defaults messages, and register our custom one for finally replace the old error handler (although we could simply
-get the current [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java),
+get the current [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java),
 and register our own message).
 
 You can also create your own class, which extends
-of [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
+of [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java)
 and modify the default behaviours and to have a more reusable error handler!
 
-> And what if I want to register my own [PArgReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java)
-> or [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java)?
+> And what if I want to register my own [PArgReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/arg/PArgReader.java)
+> or [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/sentence/PSentenceReader.java)?
 
 First, you need to create an implementation of
-the [PArgReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/arg/PArgReader.java)
-or of the [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pipilib/command/sentence/PSentenceReader.java).
+the [PArgReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/arg/PArgReader.java)
+or of the [PSentenceReader](../core/src/main/java/fr/pixeldeecran/pixellib/command/sentence/PSentenceReader.java).
 
 Then, you need to get the instance of
-your [PCommandRegistry](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandRegistry.java)
+your [PCommandRegistry](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandRegistry.java)
 (usually accessible via `this.getCommandRegistry()` in your main class).
 
 With it, you can register it :
@@ -566,15 +566,15 @@ And it's now ready to be used :
 
 ## Want to learn more?
 
-Go check this [example](../core/src/test/java/fr/pipilib/example/commands/EcoCommand.java) which is a simple example of
+Go check this [example](../core/src/test/java/fr/pixellib/example/commands/EcoCommand.java) which is a simple example of
 an economy command, but which shows the flexibility of the library!
 
 Check also these classes to learn more about what you can do, and how it works internally :
 
-- [PCommandInfo](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandInfo.java)
-- [PCommand](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommand.java)
-- [PSubCommand](../core/src/main/java/fr/pixeldeecran/pipilib/command/PSubCommand.java)
-- [PCommandRegistry](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandRegistry.java)
-- [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandErrorHandler.java)
-- [PCommandContext](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandContext.java)
-- [PCommandContainer](../core/src/main/java/fr/pixeldeecran/pipilib/command/PCommandContainer.java)
+- [PCommandInfo](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandInfo.java)
+- [PCommand](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommand.java)
+- [PSubCommand](../core/src/main/java/fr/pixeldeecran/pixellib/command/PSubCommand.java)
+- [PCommandRegistry](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandRegistry.java)
+- [PCommandErrorHandler](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandErrorHandler.java)
+- [PCommandContext](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandContext.java)
+- [PCommandContainer](../core/src/main/java/fr/pixeldeecran/pixellib/command/PCommandContainer.java)
