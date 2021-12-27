@@ -7,14 +7,14 @@ import org.bukkit.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum<S>> implements Listener {
+public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enum<S>> implements Listener {
 
-    private final GamesManager gamesManager;
+    private final PGameManager gamesManager;
     private final Map<Player, S> players;
-    private final Map<T, GameStateManager<?>> stateManager;
+    private final Map<T, PGameStateManager<?>> stateManager;
     private T currentState;
 
-    public Game(GamesManager gamesManager) {
+    public PGame(PGameManager gamesManager) {
         this.gamesManager = gamesManager;
         this.players = new HashMap<>();
         this.stateManager = new HashMap<>();
@@ -25,8 +25,6 @@ public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum
 
     public abstract void onEnded();
 
-    public abstract boolean isAvailable(); // define a game can still accept players
-
     public void onPlayerLeft(Player player) {
         this.players.remove(player);
     }
@@ -34,8 +32,6 @@ public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum
     public abstract T getDefaultState();
 
     public abstract S getDefaultPlayerState();
-
-    public abstract String getDisplayName();
 
     public void end() {
         if (this.stateManager.containsKey(this.currentState)) {
@@ -61,7 +57,7 @@ public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum
 
         this.currentState = newState;
 
-        GameStateManager<?> manager;
+        PGameStateManager<?> manager;
         if (this.stateManager.containsKey(newState)) {
             manager = this.stateManager.get(newState);
         } else {
@@ -72,7 +68,7 @@ public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum
         manager.onEnable();
     }
 
-    public GamesManager getGamesManager() {
+    public PGameManager getGamesManager() {
         return gamesManager;
     }
 
@@ -88,7 +84,7 @@ public abstract class Game<T extends Enum<T> & IEnumGameState<?>, S extends Enum
         return players;
     }
 
-    public Map<T, GameStateManager<?>> getStateManager() {
+    public Map<T, PGameStateManager<?>> getStateManager() {
         return stateManager;
     }
 

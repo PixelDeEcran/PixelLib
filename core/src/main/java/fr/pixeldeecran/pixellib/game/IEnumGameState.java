@@ -2,11 +2,11 @@ package fr.pixeldeecran.pixellib.game;
 
 import java.lang.reflect.InvocationTargetException;
 
-public interface IEnumGameState<T extends Game<?, ?>> {
+public interface IEnumGameState<T extends PGame<?, ?>> {
 
-    Class<? extends GameStateManager<T>> getManagerClass();
+    Class<? extends PGameStateManager<T>> getManagerClass();
 
-    default GameStateManager<T> createManager(Game<?, ?> game) {
+    default PGameStateManager<T> createManager(PGame<?, ?> game) {
         try {
             return this.getManagerClass().getConstructor(game.getClass()).newInstance(game);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {

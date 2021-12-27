@@ -16,7 +16,7 @@ import java.util.*;
 public class WorldGameService {
 
     private final JavaPlugin plugin;
-    private final Map<Game<?, ?>, String> worlds;
+    private final Map<PGame<?, ?>, String> worlds;
 
     public WorldGameService(JavaPlugin plugin) {
         this.plugin = plugin;
@@ -32,15 +32,15 @@ public class WorldGameService {
         return worldName;
     }
 
-    public World createWorld(Game<?, ?> Game, WorldCreator worldCreator) {
+    public World createWorld(PGame<?, ?> Game, WorldCreator worldCreator) {
         return this.reserveWorld(Game, new WorldCreator(this.getAvailableWorldName()).copy(worldCreator).createWorld());
     }
 
-    public World createEmptyWorld(Game<?, ?> Game) {
+    public World createEmptyWorld(PGame<?, ?> Game) {
         return this.createWorld(Game, new WorldCreator("").generator(new EmptyChunkGenerator()));
     }
 
-    public Optional<World> createWorldFromTemplate(Game<?, ?> Game, String worldPath) {
+    public Optional<World> createWorldFromTemplate(PGame<?, ?> Game, String worldPath) {
         File root = this.plugin.getServer().getWorldContainer().getAbsoluteFile();
         File source = new File(root, worldPath);
         File destination = new File(root, this.getAvailableWorldName());
@@ -53,12 +53,12 @@ public class WorldGameService {
         }
     }
 
-    public World reserveWorld(Game<?, ?> Game, World world) {
+    public World reserveWorld(PGame<?, ?> Game, World world) {
         this.worlds.put(Game, world.getName());
         return world;
     }
 
-    public Optional<World> getWorld(Game<?, ?> Game) {
+    public Optional<World> getWorld(PGame<?, ?> Game) {
         if (!this.worlds.containsKey(Game)) {
             return Optional.empty();
         } else {
@@ -66,7 +66,7 @@ public class WorldGameService {
         }
     }
 
-    public void deleteWorld(Game<?, ?> Game) {
+    public void deleteWorld(PGame<?, ?> Game) {
         String worldName = this.worlds.remove(Game);
         File worldFolder = Bukkit.getWorld(worldName).getWorldFolder();
         Bukkit.getServer().unloadWorld(worldName, true);
@@ -77,7 +77,7 @@ public class WorldGameService {
         }
     }
 
-    public Map<Game<?, ?>, String> getWorlds() {
+    public Map<PGame<?, ?>, String> getWorlds() {
         return worlds;
     }
 
