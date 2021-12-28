@@ -11,13 +11,13 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
 
     private final PGameManager gamesManager;
     private final Map<Player, S> players;
-    private final Map<T, PGameStateManager<?>> stateManager;
+    private final Map<T, PGameStateManager<?>> stateManagers;
     private T currentState;
 
     public PGame(PGameManager gamesManager) {
         this.gamesManager = gamesManager;
         this.players = new HashMap<>();
-        this.stateManager = new HashMap<>();
+        this.stateManagers = new HashMap<>();
         this.currentState = this.getDefaultState(); // No real use
     }
 
@@ -27,6 +27,10 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
 
     public void onPlayerLeft(Player player) {
         this.players.remove(player);
+
+        if (this.currentState != null) {
+            this.getStateManagers().get(this.currentState).onPlayerLeft(player);
+        }
     }
 
     public abstract T getDefaultState();
@@ -34,15 +38,19 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     public abstract S getDefaultPlayerState();
 
     public void end() {
-        if (this.stateManager.containsKey(this.currentState)) {
-            this.stateManager.get(this.currentState).onDisable();
+        if (this.stateManagers.containsKey(this.currentState)) {
+            this.stateManagers.get(this.currentState).onDisable();
         }
-        this.stateManager.values().forEach(HandlerList::unregisterAll);
+        this.stateManagers.values().forEach(HandlerList::unregisterAll);
         this.gamesManager.endGame(this);
     }
 
     public void addPlayer(Player player) {
         this.players.put(player, this.getDefaultPlayerState());
+
+        if (this.currentState != null) {
+            this.getStateManagers().get(this.currentState).onPlayerJoin(player);
+        }
     }
 
     public void setPlayerState(Player player, S state) {
@@ -50,19 +58,19 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     }
 
     public void setState(T newState) {
-        if (this.stateManager.containsKey(this.currentState)) {
-            HandlerList.unregisterAll(this.stateManager.get(this.currentState));
-            this.stateManager.get(this.currentState).onDisable();
+        if (this.stateManagers.containsKey(this.currentState)) {
+            HandlerList.unregisterAll(this.stateManagers.get(this.currentState));
+            this.stateManagers.get(this.currentState).onDisable();
         }
 
         this.currentState = newState;
 
         PGameStateManager<?> manager;
-        if (this.stateManager.containsKey(newState)) {
-            manager = this.stateManager.get(newState);
+        if (this.stateManagers.containsKey(newState)) {
+            manager = this.stateManagers.get(newState);
         } else {
             manager = newState.createManager(this);
-            this.stateManager.put(newState, manager);
+            this.stateManagers.put(newState, manager);
         }
         this.gamesManager.getPlugin().getServer().getPluginManager().registerEvents(manager, this.gamesManager.getPlugin());
         manager.onEnable();
@@ -84,8 +92,8 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
         return players;
     }
 
-    public Map<T, PGameStateManager<?>> getStateManager() {
-        return stateManager;
+    public Map<T, PGameStateManager<?>> getStateManagers() {
+        return stateManagers;
     }
 
     public T getState() {
