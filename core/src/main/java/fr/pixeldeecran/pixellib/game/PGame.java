@@ -26,10 +26,10 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     public abstract void onEnded();
 
     public void onPlayerLeft(Player player) {
-        this.players.remove(player);
+        this.players.put(player, this.getDefaultPlayerState());
 
-        if (this.currentState != null) {
-            this.getStateManagers().get(this.currentState).onPlayerLeft(player);
+        if (this.currentState != null && this.stateManagers.containsKey(this.currentState)) {
+            this.stateManagers.get(this.currentState).onPlayerLeft(player);
         }
     }
 
@@ -48,8 +48,8 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     public void addPlayer(Player player) {
         this.players.put(player, this.getDefaultPlayerState());
 
-        if (this.currentState != null) {
-            this.getStateManagers().get(this.currentState).onPlayerJoin(player);
+        if (this.currentState != null && this.stateManagers.containsKey(this.currentState)) {
+            this.stateManagers.get(this.currentState).onPlayerJoin(player);
         }
     }
 
