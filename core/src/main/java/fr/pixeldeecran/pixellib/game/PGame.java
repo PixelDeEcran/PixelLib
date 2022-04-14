@@ -7,18 +7,20 @@ import org.bukkit.event.Listener;
 import java.util.HashMap;
 import java.util.Map;
 
-public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enum<S>> implements Listener {
+public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enum<S> & IEnumPlayerState<?>> implements Listener {
 
-    private final PGameManager gamesManager;
+    private final PGameManager gameManager;
     private final Map<Player, S> players;
-    private final Map<T, PGameStateManager<?>> stateManagers;
-    private T currentState;
+    private final Map<T, PGameStateManager<?>> gameStateManagers;
+    private final Map<S, PPlayerStateManager<?>> playersStateManagers;
+    private T currentGameState;
 
-    public PGame(PGameManager gamesManager) {
-        this.gamesManager = gamesManager;
+    public PGame(PGameManager gameManager) {
+        this.gameManager = gameManager;
         this.players = new HashMap<>();
-        this.stateManagers = new HashMap<>();
-        this.currentState = this.getDefaultState(); // No real use
+        this.gameStateManagers = new HashMap<>();
+        this.playersStateManagers = new HashMap<>();
+        this.currentGameState = this.getDefaultState(); // No real use
     }
 
     public abstract void start();
@@ -26,10 +28,10 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     public abstract void onEnded();
 
     public void onPlayerLeft(Player player) {
-        this.players.put(player, this.getDefaultPlayerState());
+        this.playersStateManagers.get(this.players.get(player)).onQuit(player);
 
-        if (this.currentState != null && this.stateManagers.containsKey(this.currentState)) {
-            this.stateManagers.get(this.currentState).onPlayerLeft(player);
+        if (this.currentGameState != null && this.gameStateManagers.containsKey(this.currentGameState)) {
+            this.gameStateManagers.get(this.currentGameState).onPlayerLeft(player);
         }
     }
 
@@ -38,50 +40,83 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
     public abstract S getDefaultPlayerState();
 
     public void end() {
-        if (this.stateManagers.containsKey(this.currentState)) {
-            this.stateManagers.get(this.currentState).onDisable();
+        if (this.gameStateManagers.containsKey(this.currentGameState)) {
+            this.gameStateManagers.get(this.currentGameState).onDisable();
         }
-        this.stateManagers.values().forEach(HandlerList::unregisterAll);
-        this.gamesManager.endGame(this);
+        this.gameStateManagers.values().forEach(HandlerList::unregisterAll);
+
+        this.playersStateManagers.values().forEach(HandlerList::unregisterAll);
     }
 
     public void addPlayer(Player player) {
-        this.players.put(player, this.getDefaultPlayerState());
+        if (this.players.containsKey(player)) {
+            this.playersStateManagers.get(this.players.get(player)).onRejoin(player);
+        } else {
+            this.setPlayerState(player, this.getDefaultPlayerState());
+        }
 
-        if (this.currentState != null && this.stateManagers.containsKey(this.currentState)) {
-            this.stateManagers.get(this.currentState).onPlayerJoin(player);
+
+        if (this.currentGameState != null && this.gameStateManagers.containsKey(this.currentGameState)) {
+            this.gameStateManagers.get(this.currentGameState).onPlayerJoin(player);
         }
     }
 
     public void setPlayerState(Player player, S state) {
+        if (this.players.containsKey(player)) {
+            S oldState = this.players.remove(player);
+            this.playersStateManagers.get(oldState).onStateLeft(player);
+        }
+
         this.players.put(player, state);
+
+        PPlayerStateManager<?> manager;
+        if (this.playersStateManagers.containsKey(state)) {
+            manager = this.playersStateManagers.get(state);
+        } else {
+            try {
+                manager = state.getStateManager();
+                manager.setup(this, state);
+                this.gameManager.getPlugin().getServer().getPluginManager().registerEvents(manager, this.gameManager.getPlugin());
+                this.playersStateManagers.put(state, manager);
+            } catch (Exception e) {
+                e.printStackTrace();
+                return;
+            }
+        }
+
+
+        manager.onStateJoined(player);
     }
 
-    public void setState(T newState) {
-        if (this.stateManagers.containsKey(this.currentState)) {
-            HandlerList.unregisterAll(this.stateManagers.get(this.currentState));
-            this.stateManagers.get(this.currentState).onDisable();
+    public void setGameState(T newState) {
+        if (this.gameStateManagers.containsKey(this.currentGameState)) {
+            HandlerList.unregisterAll(this.gameStateManagers.get(this.currentGameState));
+            this.gameStateManagers.get(this.currentGameState).onDisable();
         }
 
-        this.currentState = newState;
+        this.currentGameState = newState;
 
         PGameStateManager<?> manager;
-        if (this.stateManagers.containsKey(newState)) {
-            manager = this.stateManagers.get(newState);
+        if (this.gameStateManagers.containsKey(newState)) {
+            manager = this.gameStateManagers.get(newState);
         } else {
             manager = newState.createManager(this);
-            this.stateManagers.put(newState, manager);
+            this.gameStateManagers.put(newState, manager);
         }
-        this.gamesManager.getPlugin().getServer().getPluginManager().registerEvents(manager, this.gamesManager.getPlugin());
+        this.gameManager.getPlugin().getServer().getPluginManager().registerEvents(manager, this.gameManager.getPlugin());
         manager.onEnable();
     }
 
-    public PGameManager getGamesManager() {
-        return gamesManager;
+    public <M extends PGameStateManager<?>> M getCurrentGameStateManager() {
+        return (M) this.gameStateManagers.get(this.currentGameState);
+    }
+
+    public PGameManager getGameManager() {
+        return gameManager;
     }
 
     public WorldGameService getWorldService() {
-        return this.gamesManager.getWorldService();
+        return this.gameManager.getWorldService();
     }
 
     public S getPlayerState(Player player) {
@@ -92,11 +127,15 @@ public abstract class PGame<T extends Enum<T> & IEnumGameState<?>, S extends Enu
         return players;
     }
 
-    public Map<T, PGameStateManager<?>> getStateManagers() {
-        return stateManagers;
+    public Map<T, PGameStateManager<?>> getGameStateManagers() {
+        return gameStateManagers;
     }
 
-    public T getState() {
-        return currentState;
+    public Map<S, PPlayerStateManager<?>> getPlayersStateManagers() {
+        return playersStateManagers;
+    }
+
+    public T getGameState() {
+        return currentGameState;
     }
 }
