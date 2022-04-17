@@ -1,16 +1,16 @@
 package fr.pixeldeecran.pixellib.boostrap;
 
 import fr.pixeldeecran.pixellib.utils.ReflectionUtils;
-import me.tongfei.progressbar.ProgressBar;
-import me.tongfei.progressbar.ProgressBarBuilder;
-import me.tongfei.progressbar.ProgressBarStyle;
 import org.apache.commons.io.IOUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.command.SimpleCommandMap;
 import org.bukkit.event.HandlerList;
-import org.bukkit.plugin.*;
+import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.plugin.InvalidPluginException;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.tools.ToolProvider;
@@ -171,26 +171,17 @@ public class PBootstrapPlugin extends JavaPlugin {
                         return;
                     }
 
-                    try (ProgressBar bar = new ProgressBarBuilder()
-                        .setTaskName("Download JDK")
-                        .setUnit("MiB", 1048576)
-                        .setStyle(ProgressBarStyle.ASCII)
-                        .showSpeed()
-                        .build()) {
+                    downloader.downloadJDK(PBootstrapPlugin.LTS_JDK_RELEASE_NAME, max -> {}, step -> {}).ifPresent(jdkFile -> {
+                        AgentToolsInstaller agentInstaller = new AgentToolsInstaller(jdkFile, agentDir);
+                        try {
+                            agentInstaller.extract();
+                            agentInstaller.link();
 
-                        downloader.downloadJDK(PBootstrapPlugin.LTS_JDK_RELEASE_NAME, max -> {
-                            bar.maxHint(max);
-                            bar.stepTo(0);
-                        }, bar::stepTo).ifPresent(jdkFile -> {
-                            AgentToolsInstaller agentInstaller = new AgentToolsInstaller(jdkFile, agentDir);
-                            try {
-                                agentInstaller.extract();
-                                agentInstaller.link();
-                            } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
-                                e.printStackTrace();
-                            }
-                        });
-                    }
+                            this.getLogger().info("Done installing agent tools");
+                        } catch (IOException | ClassNotFoundException | InvocationTargetException | NoSuchMethodException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    });
                 }
             } else {
                 this.getLogger().info("Running JDK");

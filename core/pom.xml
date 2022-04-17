@@ -55,20 +55,8 @@
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <relocations>
                                 <relocation>
-                                    <pattern>org.apache.commons.io</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.commons-io</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.apache.commons.httpclient</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.commons-httpclient</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>org.reflections</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.reflections</shadedPattern>
-                                </relocation>
-                                <relocation>
-                                    <pattern>javassist</pattern>
-                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.javassist</shadedPattern>
+                                    <pattern>org.apache.commons</pattern>
+                                    <shadedPattern>fr.pixeldeecran.pixellib.libs.apache-commons</shadedPattern>
                                 </relocation>
                             </relocations>
                         </configuration>
@@ -119,12 +107,6 @@
         </dependency>
 
         <dependency>
-            <groupId>org.reflections</groupId>
-            <artifactId>reflections</artifactId>
-            <version>0.9.12</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>2.11.0</version>
@@ -136,30 +118,12 @@
             <version>3.1</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>me.tongfei</groupId>
-            <artifactId>progressbar</artifactId>
-            <version>0.9.2</version>
-            <scope>compile</scope>
-        </dependency>
 
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy</artifactId>
-            <version>1.11.21</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>net.bytebuddy</groupId>
-            <artifactId>byte-buddy-agent</artifactId>
-            <version>1.11.21</version>
-            <scope>compile</scope>
-        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
-            <scope>compile</scope>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 </project>

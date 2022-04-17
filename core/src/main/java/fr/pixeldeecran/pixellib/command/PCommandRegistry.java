@@ -16,7 +16,6 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.reflections.Reflections;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
@@ -204,9 +203,10 @@ public class PCommandRegistry {
      * @param packageName The package name
      */
     public void registerAllCommandsIn(String packageName) {
-        Reflections reflections = new Reflections(packageName);
-
-        reflections.getSubTypesOf(PCommand.class).forEach(commandClass -> {
+        ReflectionUtils.findAllClassesIn(packageName)
+            .stream()
+            .filter(clazz -> PCommand.class.isAssignableFrom(clazz) && PCommand.class.isAssignableFrom(clazz.getSuperclass()))
+            .forEach(commandClass -> {
             try {
                 if (commandClass.getPackage().getName().startsWith(packageName) && commandClass != PSubCommand.class
                     && !Modifier.isAbstract(commandClass.getModifiers()) && !Modifier.isInterface(commandClass.getModifiers())
@@ -218,7 +218,7 @@ public class PCommandRegistry {
                     }
                     commandClass.getDeclaredConstructor(); // check if it has an empty constructor
 
-                    this.registerCommand(commandClass);
+                    this.registerCommand((Class<? extends PCommand>) commandClass);
                 }
             } catch (NoSuchMethodException ignored) {
             }
