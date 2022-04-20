@@ -21,6 +21,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 /**
  * Handles {@link PCommand}, {@link PArgReader} and {@link PSentenceReader} registration.
@@ -70,6 +71,8 @@ public class PCommandRegistry {
      */
     private CommandMap commandMap;
 
+    private Function<Class<? extends PCommand>, PCommand> commandFactory;
+
     /**
      * Main constructor of {@link PCommandRegistry}. This is where we also call
      * {@link PCommandRegistry#lookForCommandMap()} to get the {@link CommandMap} instance.
@@ -82,6 +85,13 @@ public class PCommandRegistry {
         this.argReaderRegistry = new HashMap<>();
         this.sentenceReaderRegistry = new HashMap<>();
         this.errorHandlerTemplate = new PCommandErrorHandler();
+        this.commandFactory = clazz -> {
+            try {
+                return clazz.getConstructor().newInstance();
+            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+                throw new IllegalArgumentException("Couldn't instantiate PCommand class " + clazz.getName(), e);
+            }
+        };
 
         this.lookForCommandMap();
     }
@@ -232,15 +242,11 @@ public class PCommandRegistry {
      * @param clazz The command class
      */
     public void registerCommand(Class<? extends PCommand> clazz) {
-        try {
-            PCommand command = clazz.getDeclaredConstructor().newInstance();
-            PCommandContainer container = new PCommandContainer(command, this, plugin);
+        PCommand command = this.commandFactory.apply(clazz);
+        PCommandContainer container = new PCommandContainer(command, this, plugin);
 
-            if (this.commandMap != null) {
-                this.commandMap.register(this.plugin.getDescription().getName().toLowerCase(), container);
-            }
-        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            throw new IllegalArgumentException("Couldn't instantiate Command class " + clazz.getName(), e);
+        if (this.commandMap != null) {
+            this.commandMap.register(this.plugin.getDescription().getName().toLowerCase(), container);
         }
     }
 
@@ -250,6 +256,10 @@ public class PCommandRegistry {
     public void lookForCommandMap() {
         this.commandMap = (CommandMap) ReflectionUtils.getFieldValue(this.plugin.getServer().getClass(), "commandMap",
             Bukkit.getServer());
+    }
+
+    public void setCommandFactory(Function<Class<? extends PCommand>, PCommand> commandFactory) {
+        this.commandFactory = commandFactory;
     }
 
     /**
@@ -295,5 +305,9 @@ public class PCommandRegistry {
      */
     public CommandMap getCommandMap() {
         return commandMap;
+    }
+
+    public Function<Class<? extends PCommand>, PCommand> getCommandFactory() {
+        return commandFactory;
     }
 }
